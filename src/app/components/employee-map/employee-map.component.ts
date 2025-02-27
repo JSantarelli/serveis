@@ -7,11 +7,10 @@ import { Subscription } from 'rxjs';
 import { Empleado } from '../../models/employer';
 
 @Component({
-  selector: 'app-employee-map',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './employee-map.component.html',
-  styleUrls: ['./employee-map.component.scss']
+    selector: 'app-employee-map',
+    imports: [CommonModule],
+    templateUrl: './employee-map.component.html',
+    styleUrls: ['./employee-map.component.scss']
 })
 export class EmployeeMapComponent implements OnInit, OnDestroy {
   map: Map;

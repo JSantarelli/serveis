@@ -9,11 +9,10 @@ import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-check-attendance',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './check-attendance.component.html',
-  styleUrls: ['./check-attendance.component.scss']
+    selector: 'app-check-attendance',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './check-attendance.component.html',
+    styleUrls: ['./check-attendance.component.scss']
 })
 export class CheckAttendanceComponent implements OnInit {
   map: Map;
