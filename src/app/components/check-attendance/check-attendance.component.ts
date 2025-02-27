@@ -1,14 +1,17 @@
 // check-attendance.component.ts
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Map, tileLayer, marker, icon } from 'leaflet';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Firestore, doc, updateDoc, collection, addDoc } from '@angular/fire/firestore';
 import { AuthService } from '../../services/auth.service';
-import { Empleado, Ubicacion, Asistencia } from '../../models/employer';
-// import { ToastrService } from 'ngx-toastr';
-import { formatDate } from '@angular/common';
+import { Empleado, Ubicacion, Asistencia } from '../../models/empleado.model';
+import { ToastrService } from 'ngx-toastr';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-check-attendance',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './check-attendance.component.html',
   styleUrls: ['./check-attendance.component.scss']
 })
@@ -21,7 +24,7 @@ export class CheckAttendanceComponent implements OnInit {
   todayDate: Date = new Date();
   
   constructor(
-    private firestore: AngularFirestore,
+    private firestore: Firestore,
     private authService: AuthService,
     private toastr: ToastrService
   ) {}
@@ -81,13 +84,10 @@ export class CheckAttendanceComponent implements OnInit {
   loadEmployeeData(): void {
     this.authService.getCurrentUser().subscribe(user => {
       if (user && user.uid) {
-        this.firestore.collection('empleados')
-          .doc<Empleado>(user.uid)
-          .valueChanges()
-          .subscribe(employee => {
-            this.currentEmployee = employee;
-            this.checkTodayAttendance();
-          });
+        this.authService.getEmployeeById(user.uid).subscribe(employee => {
+          this.currentEmployee = employee;
+          this.checkTodayAttendance();
+        });
       }
     });
   }
@@ -140,7 +140,9 @@ export class CheckAttendanceComponent implements OnInit {
     this.currentEmployee.ubicacionActual = { ...this.currentLocation };
     
     // Update in Firestore
-    this.firestore.collection('empleados').doc(this.currentEmployee.id).update({
+    const employeeDocRef = doc(this.firestore, 'empleados', this.currentEmployee.id);
+    
+    updateDoc(employeeDocRef, {
       historialAsistencia: this.currentEmployee.historialAsistencia,
       ubicacionActual: this.currentEmployee.ubicacionActual
     })
@@ -149,7 +151,8 @@ export class CheckAttendanceComponent implements OnInit {
       this.isLoading = false;
       
       // Add a separate check-in record to a dedicated collection for easier querying
-      this.firestore.collection('registros-asistencia').add({
+      const registrosRef = collection(this.firestore, 'registros-asistencia');
+      addDoc(registrosRef, {
         empleadoId: this.currentEmployee.id,
         nombre: this.currentEmployee.nombre + ' ' + this.currentEmployee.apellido,
         fecha: new Date(),
@@ -195,7 +198,9 @@ export class CheckAttendanceComponent implements OnInit {
     this.currentEmployee.ubicacionActual = null;
     
     // Update in Firestore
-    this.firestore.collection('empleados').doc(this.currentEmployee.id).update({
+    const employeeDocRef = doc(this.firestore, 'empleados', this.currentEmployee.id);
+    
+    updateDoc(employeeDocRef, {
       historialAsistencia: this.currentEmployee.historialAsistencia,
       ubicacionActual: null
     })
@@ -204,7 +209,8 @@ export class CheckAttendanceComponent implements OnInit {
       this.isLoading = false;
       
       // Add a separate check-out record
-      this.firestore.collection('registros-asistencia').add({
+      const registrosRef = collection(this.firestore, 'registros-asistencia');
+      addDoc(registrosRef, {
         empleadoId: this.currentEmployee.id,
         nombre: this.currentEmployee.nombre + ' ' + this.currentEmployee.apellido,
         fecha: new Date(),
