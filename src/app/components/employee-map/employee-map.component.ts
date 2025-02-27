@@ -1,21 +1,23 @@
 // employee-map.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Map, tileLayer, marker, icon, Marker } from 'leaflet';
+import L, { Map, tileLayer, marker, icon, divIcon, Marker } from 'leaflet';
 import { AttendanceService } from '../../services/attendance.service';
 import { Subscription } from 'rxjs';
 import { Empleado } from '../../models/employer';
 
 @Component({
-    selector: 'app-employee-map',
-    imports: [CommonModule],
-    templateUrl: './employee-map.component.html',
-    styleUrls: ['./employee-map.component.scss']
+  selector: 'app-employee-map',
+  templateUrl: './employee-map.component.html',
+  styleUrls: ['./employee-map.component.scss'],
+  imports: [
+    CommonModule
+  ]
 })
 export class EmployeeMapComponent implements OnInit, OnDestroy {
-  map: Map;
+  map!: Map;
   employeeMarkers: Marker[] = [];
-  employeesSubscription: Subscription;
+  employeesSubscription!: Subscription;
   checkedInEmployees: any[] = [];
   isLoading = true;
   

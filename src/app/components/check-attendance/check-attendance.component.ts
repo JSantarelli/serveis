@@ -4,21 +4,22 @@ import { CommonModule } from '@angular/common';
 import { Map, tileLayer, marker, icon } from 'leaflet';
 import { Firestore, doc, updateDoc, collection, addDoc } from '@angular/fire/firestore';
 import { AuthService } from '../../services/auth.service';
-import { Empleado, Ubicacion, Asistencia } from '../../models/empleado.model';
+import { Empleado, Ubicacion, Asistencia } from '../../models/employer';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-    selector: 'app-check-attendance',
-    imports: [CommonModule, FormsModule],
-    templateUrl: './check-attendance.component.html',
-    styleUrls: ['./check-attendance.component.scss']
+  selector: 'app-check-attendance',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './check-attendance.component.html',
+  styleUrls: ['./check-attendance.component.scss']
 })
 export class CheckAttendanceComponent implements OnInit {
-  map: Map;
-  currentLocation: Ubicacion = null;
-  currentEmployee: Empleado = null;
-  todayAttendance: Asistencia = null;
+  map!: Map;
+  currentLocation: Ubicacion | null | undefined = null;  // Allow null and undefined
+  currentEmployee!: Empleado;
+  todayAttendance!: Asistencia; // Or provide a default empty object that matches the Asistencia type
   isLoading = false;
   todayDate: Date = new Date();
   
@@ -32,6 +33,7 @@ export class CheckAttendanceComponent implements OnInit {
     this.initMap();
     this.getCurrentPosition();
     this.loadEmployeeData();
+    console.log('Carga!')
   }
   
   initMap(): void {
@@ -84,8 +86,13 @@ export class CheckAttendanceComponent implements OnInit {
     this.authService.getCurrentUser().subscribe(user => {
       if (user && user.uid) {
         this.authService.getEmployeeById(user.uid).subscribe(employee => {
-          this.currentEmployee = employee;
-          this.checkTodayAttendance();
+          if (employee) {
+            this.currentEmployee = employee; // Only assign if employee is not null
+            this.checkTodayAttendance();
+          } else {
+            this.currentEmployee; // Handle the case where no employee is found
+            console.log('Employee not found');
+          }
         });
       }
     });
@@ -102,7 +109,7 @@ export class CheckAttendanceComponent implements OnInit {
       const recordDate = new Date(record.fecha);
       recordDate.setHours(0, 0, 0, 0);
       return recordDate.getTime() === today.getTime();
-    });
+    })!;  // Use non-null assertion to ensure it's not undefined
     
     // If no attendance record for today, create one
     if (!this.todayAttendance) {
@@ -194,7 +201,7 @@ export class CheckAttendanceComponent implements OnInit {
     }
     
     // Clear current location as employee is no longer working
-    this.currentEmployee.ubicacionActual = null;
+    this.currentEmployee.ubicacionActual;
     
     // Update in Firestore
     const employeeDocRef = doc(this.firestore, 'empleados', this.currentEmployee.id);

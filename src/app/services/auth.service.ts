@@ -20,16 +20,18 @@ export class AuthService {
     return authState(this.auth);
   }
   
-  getEmployeeById(id: string): Observable<Empleado> {
+  getEmployeeById(id: string): Observable<Empleado | null> {
     const docRef = doc(this.firestore, `empleados/${id}`);
     
-    return new Observable<Empleado>(observer => {
+    return new Observable<Empleado | null>(observer => {
       const unsubscribe = onSnapshot(docRef, (snapshot) => {
         const data = snapshot.data() as Empleado;
+        
+        // If data exists, send the employee object, else send null
         if (data) {
-          observer.next({ id: snapshot.id, ...data });
+          observer.next({ ...data, id: snapshot.id });  // Return employee object
         } else {
-          observer.next(null);
+          observer.next(null);  // Return null if no data found
         }
       }, error => {
         observer.error(error);
@@ -38,7 +40,7 @@ export class AuthService {
       // Return the unsubscribe function for cleanup
       return unsubscribe;
     });
-  }
+  }  
   
   login(email: string, password: string): Observable<any> {
     return from(signInWithEmailAndPassword(this.auth, email, password));
@@ -74,7 +76,7 @@ export class AuthService {
   }
   
   // Get current user's role
-  getCurrentUserRole(): Observable<string> {
+  getCurrentUserRole(): Observable<string | null> {
     return this.getCurrentUser().pipe(
       switchMap(user => {
         if (!user) return of(null);
@@ -83,5 +85,5 @@ export class AuthService {
         );
       })
     );
-  }
+  }  
 }

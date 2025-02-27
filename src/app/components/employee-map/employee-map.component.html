@@ -1,1 +1,47 @@
-<p>employee-map works!</p>
+<!-- employee-map.component.html -->
+<div class="container">
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>Ubicación de Empleados</h4>
+            <button class="btn btn-sm btn-outline-primary" (click)="refreshLocations()">
+              <i class="bi bi-arrow-clockwise me-1"></i> Actualizar
+            </button>
+          </div>
+          <div class="card-body">
+            <div *ngIf="isLoading" class="text-center my-3">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+              <p class="mt-2">Cargando ubicaciones...</p>
+            </div>
+            
+            <div id="employee-map" style="height: 500px;"></div>
+            
+            <div class="employee-list mt-4">
+              <h5>Empleados actualmente en servicio ({{ checkedInEmployees.length }})</h5>
+              
+              <div *ngIf="checkedInEmployees.length === 0" class="alert alert-info">
+                No hay empleados registrados en este momento.
+              </div>
+              
+              <div class="row mt-3">
+                <div class="col-md-4 mb-3" *ngFor="let employee of checkedInEmployees">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="card-title">{{ employee.nombre }} {{ employee.apellido }}</h6>
+                      <p class="card-text">
+                        <span class="badge bg-info me-2">{{ employee.rol }}</span>
+                        <small class="text-muted">Check-in: {{ employee.ubicacionActual.timestamp | date:'HH:mm' }}</small>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

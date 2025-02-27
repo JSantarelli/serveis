@@ -1,0 +1,39 @@
+/* check-attendance.component.scss */
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  
+  .employee-info {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .attendance-status {
+    position: relative;
+  }
+  
+  .location-info {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+  }
+  
+  .check-buttons {
+    margin-top: 20px;
+  }
+  
+  .time-details {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 10px;
+  }
+  
+  #attendance-map {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+  } 
