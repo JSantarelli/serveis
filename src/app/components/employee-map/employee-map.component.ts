@@ -4,7 +4,8 @@ import { CommonModule } from '@angular/common';
 import L, { Map, tileLayer, marker, icon, divIcon, Marker } from 'leaflet';
 import { AttendanceService } from '../../services/attendance.service';
 import { Subscription } from 'rxjs';
-import { Empleado } from '../../models/employer';
+import { Empleado } from '../../models/employee';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-employee-map',
@@ -21,11 +22,10 @@ export class EmployeeMapComponent implements OnInit, OnDestroy {
   checkedInEmployees: any[] = [];
   isLoading = true;
   
-  constructor(private attendanceService: AttendanceService) {}
+  constructor(private afAuth: AuthService, private attendanceService: AttendanceService) {}
   
   ngOnInit(): void {
     this.initMap();
-    this.loadEmployeeLocations();
   }
   
   ngOnDestroy(): void {
@@ -41,16 +41,17 @@ export class EmployeeMapComponent implements OnInit, OnDestroy {
     }).addTo(this.map);
   }
   
-  loadEmployeeLocations(): void {
+  loadEmployeeLocations(userId: string): void {
     this.isLoading = true;
-    
-    this.employeesSubscription = this.attendanceService.getCheckedInEmployees()
+  
+    // Pass the userId argument to the getEmpleadosByUserId function
+    this.employeesSubscription = this.attendanceService.getEmpleadosByUserId(userId)
       .subscribe(employees => {
         this.checkedInEmployees = employees;
         this.updateMarkers();
         this.isLoading = false;
       });
-  }
+  }  
   
   updateMarkers(): void {
     // Clear existing markers
@@ -92,7 +93,4 @@ export class EmployeeMapComponent implements OnInit, OnDestroy {
     }
   }
   
-  refreshLocations(): void {
-    this.loadEmployeeLocations();
-  }
 }

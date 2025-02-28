@@ -1,0 +1,158 @@
+app-button {
+
+  %baseBtn {
+      padding: var(--button__padding);
+      background: var(--button__bg--color);
+      font-size: var(--button__font--size);
+      color: var(--button__text--color);
+      text-align: var(--button__text--align);
+      border-radius: var(--button__border--radius);
+      width: var(--button__width);
+      text-transform: capitalize;
+      text-wrap: nowrap;
+  }
+
+  > button {
+
+    @extend %baseBtn;
+    
+    &:hover {
+        // background: darken(rgba(122, 122, 122, .2), 10%);
+        filter: brightness(120%);
+        cursor: pointer;
+    }
+    
+    &:active {
+        background-color: var(--secondary);
+        filter: brightness(95%);
+        cursor: grab;
+    }
+
+    &[disabled] {
+      pointer-events: none;
+      opacity: .5;
+      user-select: none;
+    }
+
+  // Types
+  &[class*=__fill] {
+    --button__text--color: white!important;
+    --label__title--color: white;
+    --button__border--color: transparent!important;
+    border: solid 2px var(--button__border--color);
+  }
+    
+  &[class*=__outline] {
+    --label__title--color: var(--button__bg--color);
+    --button__border--color: var(--button__bg--color);
+    background: transparent!important;
+    border: solid 2px var(--button__bg--color);
+    color: var(--label__title--color);
+  }
+  
+  &[class*=__link] {
+    --button__border--color: var(--button__bg--color);
+    --button__padding: 0;
+    background: transparent!important;
+    border: none!important;
+    color: var(--button__bg--color)!important;
+  }
+
+  &[class*=__fab] {
+    --button__text--color: white!important;
+    --label__title--color: white;
+    --button__border--color: transparent!important;
+    position: absolute;
+    width: calc(var(--button__font--size) * 7.5); // Reveer calc
+    height: calc(var(--button__font--size) * 7.5); // Reveer calc
+    border: solid 2px var(--button__border--color);
+    border-radius: 50%;
+    z-index: 3;
+  }
+
+  &[class*=__icon] {
+    background-color: transparent;
+    color: var(--label__title--color);
+    padding: 0.5rem;
+  }
+
+  // Severities
+  &[class$=--primary] {
+      --button__text--color: inherit;
+      --button__border--color: var(--primary);
+      --button__bg--color: var(--primary);
+    }
+    
+    &[class$=--secondary] {
+      --button__text--color: inherit;
+      --button__border--color: var(--secondary);
+      --button__bg--color: var(--secondary);
+    }
+    
+    &[class$=--tertiary] {
+      --button__text--color: inherit;
+      --button__border--color: var(--tertiary);
+      --button__bg--color: var(--tertiary);
+  }
+
+  &[class$=--success] {
+      --button__text--color: inherit;
+      --button__bg--color: var(--success);
+  }
+
+  &[class$=--warning] {
+    --button__text--color: inherit;
+    --button__bg--color: var(--warning);
+  }
+
+  &[class$=--danger] {
+    --button__text--color: inherit;
+    --button__bg--color: var(--danger);
+  }
+
+  &[class$=--info] {
+    --button__text--color: inherit;
+    --button__bg--color: var(--info);
+  }
+
+  &[class$=--neutral] {
+    --button__text--color: inherit;
+    --button__bg--color: var(--neutral);
+  }
+
+  // Sizes: el label interno dicta el tamaño del botón
+  &.button__size {
+
+    &--xxs {
+      --button__padding: .1rem .2rem;
+      --button__font--size: 8px;
+    }
+
+    &--xs {
+      --button__padding: .2rem .25rem;
+      --button__font--size: 10px;
+    }
+
+    &--sm {
+      --button__padding: .35rem .7rem;
+      --button__font--size: 12px;
+    }
+
+    &--md {
+      --button__padding: .5rem 1rem;
+      --button__font--size: 14px;
+    }
+
+    &--lg {
+      --button__padding: 0.65rem 1.25rem;
+      --button__font--size: 16px;
+    }
+
+    &--xl {
+      --button__padding: 0.9rem 1.5rem;
+      --button__font--size: 18px;
+    }
+  }
+  }
+}
+  

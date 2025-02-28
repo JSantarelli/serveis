@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+@import './app/assets/scss/mixins';
+@import './app/assets/scss/variables';
+@import './app/assets/scss/normalize';
+@import './app/assets/scss/forms';
+@import './app/assets/scss/layout';
+@import './app/assets/scss/responsive';
+
+// Components
+@import './app/shared/badge/badge.component.scss';
+@import './app/shared/button/button.component.scss';
+@import './app/shared/card/card.component.scss';
+@import './app/shared/label/label.component.scss';
+@import './app/shared/switcher/switcher.component.scss';
+
+// Pages
+@import './app/shared/header/header.component.scss';
+@import './app/shared/navbar/navbar.component.scss';
+@import './app/components/auth/login/login.component.scss';
+@import './../node_modules/leaflet/dist/leaflet.css'

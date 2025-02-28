@@ -1,1 +1,144 @@
-<p>register works!</p>
+<main id="signUp">
+  <span class="page__bg--overlay"></span>
+  <form class="page__panel--float" [formGroup]="form" (ngSubmit)="signUp()">
+    <section class="panel__inner--left">
+      <img *ngIf="!isMobile" src="./assets/img/serveis_logo-h.jpg" class="panel__img--center" width="240" src="" alt="logo serveis">
+      <!-- <img *ngIf="isMobile" class="panel__img--center" width="60" height="60" src="" alt="logo serveis"> -->
+    </section>
+    <!-- form -->
+    <section type="flex" class="panel__inner--right">
+      <app-label
+      size="md"
+      [prefix]="'Ingreso'"
+      [label]="'Bienvenido'"
+      subtitle="Aquí comienza tu historia de Salud"
+      [direction]="isMobile ? 'column' : 'row'"
+    ></app-label>
+    <hr>
+    <div type="wrap">
+      <div class="form__input-wrapper--col">
+        <app-required [label]="'Nombre'" [control]="'nombre'"></app-required>
+        <input formControlName="nombre" />
+        <small class="required" *ngIf="form.controls['nombre']?.invalid && form.controls['nombre']?.touched">
+          Nombre es obligatorio
+        </small>
+      </div>   
+        <div class="form__input-wrapper--col">
+          <app-required [label]="'Apellido'" [control]="'apellido'"></app-required>
+          <input formControlName="apellido" />
+          <small class="required" *ngIf="form.controls['apellido']?.invalid && form.controls['apellido']?.touched">
+            Apellido es obligatorio
+          </small>
+        </div>
+        <div class="form__input-wrapper--col">
+          <label class="required" for="email">Email</label>
+          <input formControlName="email" />
+          <small class="required" *ngIf="form.controls['email'].invalid && form.controls['email']?.touched">
+            {{ form.controls['email'].errors?.['required'] ? 'Email es obligatorio' : 'Email no es válido' }}
+          </small>
+        </div>
+      <section type="flex">
+        <span class="form__input-wrapper--row">
+          <div class="form__input-wrapper--row">
+            <div class="form__input-wrapper--col">
+              <app-required [label]="'Contraseña'" [control]="'password'"></app-required>
+              <input
+                [type]="hide ? 'password' : 'text'"
+                formControlName="password"
+              />
+              <small class="required" *ngIf="form.controls['password']?.invalid && form.controls['password']?.touched">
+                La contraseña es obligatoria
+              </small>
+            </div>
+              <app-button
+              [type]="'button'"
+              size="sm"
+              [severity]="'primary'"
+              [variant]="'outline'"
+              [icon]="'eye'"
+              [direction]="'none'"
+              (click)="hide = !hide"
+              >
+            </app-button>
+          </div>
+          <div class="form__input-wrapper--row">
+            <div class="form__input-wrapper--col">
+              <app-required [label]="'Repetir contraseña'" [control]="'confirmPassword'"></app-required>
+              <input
+                [type]="hide ? 'password' : 'text'"
+                formControlName="confirmPassword"
+                (input)="form.get('confirmPassword')?.updateValueAndValidity()"
+              />
+              <small class="required" *ngIf="passwordsDoNotMatch">
+                Las contraseñas no coinciden
+              </small>
+            </div>
+              <app-button
+              [type]="'button'"
+              size="sm"
+              [severity]="'primary'"
+              [variant]="'outline'"
+              [icon]="'eye'"
+              [direction]="'none'"
+              (click)="hide = !hide"
+              >
+            </app-button>
+          </div>
+        </span>
+      </section>
+    </div>
+    </section>
+    <!-- disclaimer -->
+    <section class="panel__prefooter">
+      <small class="footer__text--sm">
+        <b>Aviso Legal y Términos de Uso</b><br>
+        Al registrarte en experienciaPaciente, reconoces que la plataforma te brinda el poder de gestionar y controlar tus propios datos de salud, sin depender exclusivamente de sistemas tradicionales. experienciaPaciente no sustituye la atención médica, pero te posibilita acceder, registrar y compartir tu información de Salud.
+      </small>
+    </section>
+    <footer class="panel__footer">
+      <app-button
+        size="xs"
+        [severity]="'primary'"
+        [variant]="'link'"
+        [icon]="'arrow-left'"
+        [direction]="'row'"
+        [label]="'Volver'"
+        [path]="'login'"
+      ></app-button>
+
+      <app-button
+        severity="success"
+        type="submit"
+        variant="fill"
+        [icon]="'check-circle'"
+        [direction]="'row'"
+        [label]="'Registrarme'"
+        size="xs"
+        [disabled]="form.invalid || passwordsDoNotMatch"
+        >
+      </app-button>
+    </footer>
+  </form>
+  <!-- Notificación -->
+  <app-card
+      *ngIf="showConfirmMsg || showErrorMsg"
+      size="lg"
+      direction="row"
+      [variant]="'fab'"
+      bottom="20px"
+      left="calc(50vw - 180px)"
+      [severity]="showErrorMsg ? 'danger' : 'success'"
+      [closable]="hide"
+      [selectable]="showErrorMsg"
+    >
+      <app-label
+        size="xxs"
+        [label]="showErrorMsg ? 'No se ha podido registrar el usuario' : 'El usuario ha sido creado exitosamente'"
+        [subtitle]="showErrorMsg ? 'Vuelva a intentar luego' : 'Será redirigido al login'"
+        [icon]="showErrorMsg ? 'alert-circle' : 'info-circle'"
+        variant="outline"
+        direction="row"
+        severity="success"
+      ></app-label>
+    </app-card>
+</main>

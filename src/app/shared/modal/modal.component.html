@@ -1,0 +1,37 @@
+<span class="modal__backdrop" (click)="close()">
+  <section class="modal__wrapper" (click)="$event.stopPropagation()">
+    <header class="modal__header">
+      <app-label
+      [prefix]="prefix"
+      [icon]="icon"
+      [size]="size"
+      [label]="title"
+      [subtitle]="subtitle"
+      direction="row"
+      >
+      @if (closeable) {
+        <app-button icon="close" variant="icon" severity="primary" (click)="close()"></app-button>
+      }
+      </app-label>
+    </header>
+    <div class="modal__body">
+      <figure class="modal__img--wrapper">
+        @if (img) {
+          <img [src]="img" alt="{{ caption }}" class="modal__img" />
+        }
+        @if (caption) {
+          <p class="modal__caption">{{ caption }}</p>
+        }
+      </figure>
+    </div>
+    <footer class="modal__footer">
+      <span class="modal__footer--left">
+        <ng-content select="app-button[severity=danger]"></ng-content>
+        <ng-content select="app-button[variant=outline]"></ng-content>
+      </span>
+      <span class="modal__footer--right">
+        <ng-content select="app-button[severity=success]"></ng-content>
+      </span>
+    </footer>
+  </section>
+</span>

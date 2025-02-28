@@ -1,1 +1,19 @@
-<p>employee-list works!</p>
+<div class="employee-list-container">
+    <h2>Employee List</h2>
+    <ul *ngIf="empleados$ | async as empleados; else loading">
+      <li *ngFor="let empleado of empleados">
+        <div class="employee-card">
+          <h3>{{ empleado.nombre }}</h3>
+          <p>Email: {{ empleado.email }}</p>
+          <p>Position: {{ empleado.rol }}</p>
+          <p>User ID: {{ empleado.id }}</p>
+          <!-- Add any other fields you want to display -->
+        </div>
+      </li>
+    </ul>
+  
+    <ng-template #loading>
+      <p>Loading employees...</p>
+    </ng-template>
+  </div>
+  

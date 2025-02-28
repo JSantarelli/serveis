@@ -1,0 +1,31 @@
+@keyframes fade-in {
+  0% {
+    transform: translateY(300px);
+    opacity: 0;
+  }
+  
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@mixin custom-card-color($color) {
+  background-color: var(--card__bg--color, $color);
+  border-color: var(--card__border--color, $color);
+}
+
+
+// Reveer funcionalidad de contraste
+@mixin text-contrast($n) {
+  $color-brightness: round((red($n) * 299) + (green($n) * 587) + (blue($n) * 114) / 1000);
+  $light-color: round((red(#ffffff) * 299) + (green(#ffffff) * 587) + (blue(#ffffff) * 114) / 1000);
+  
+  @if abs($color-brightness) < ($light-color/2){
+    color: white;
+  }
+
+  @else {
+    color: inherit;
+  }
+}

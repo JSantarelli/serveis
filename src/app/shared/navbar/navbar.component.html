@@ -1,0 +1,20 @@
+<nav class="nav__wrapper--row">
+  <ng-container *ngFor="let item of items; trackBy: trackByFn">
+    <app-card
+      size="xs"
+      direction="column"
+      [selectable]="true"
+      [variant]="'fill'"
+      [severity]="'custom'"
+      [color]="item.color"
+      [selected]="item.selectable"
+      (click)="toggleSelectable(item)"
+    >
+      <app-label
+        size="xxs"
+        [label]="item.label"
+        [icon]="item.icon"
+      ></app-label>
+    </app-card>
+  </ng-container>
+</nav>

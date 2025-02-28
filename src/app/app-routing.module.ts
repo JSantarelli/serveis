@@ -8,15 +8,12 @@ import { EmployeeMapComponent } from './components/employee-map/employee-map.com
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { EmployeeListComponent } from './components/employee-list/employee-list.component';
 import { EmployeeProfileComponent } from './components/employee-profile/employee-profile.component';
-import { LoginComponent } from './components/auth/login/login.component';
+import { LoginComponent} from './components/auth/login/login.component'
 import { RegisterComponent } from './components/auth/register/register.component';
 import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password.component';
 import { AttendanceReportComponent } from './components/reports/attendance-report/attendance-report.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 
-// Guards
-import { AuthGuard } from './guards/auth.guard';
-import { RoleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
   // Auth routes
@@ -27,7 +24,7 @@ export const routes: Routes = [
   // Main routes (protected by auth)
   { 
     path: '', 
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     children: [
       { path: '', redirectTo: '/check-attendance', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
@@ -45,8 +42,6 @@ export const routes: Routes = [
       // Admin routes (protected by role)
       { 
         path: 'admin', 
-        canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Administrador'] },
         children: [
           { path: 'map', component: EmployeeMapComponent },
           { path: 'reports', component: AttendanceReportComponent }

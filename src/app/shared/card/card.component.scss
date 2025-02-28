@@ -1,0 +1,328 @@
+app-card {
+  width: 100%;
+
+  %baseCard {
+    display: flex;
+    flex-direction: var(--card__direction);
+    justify-content: var(--card__wrapper--justify);
+    align-items: var(--card__wrapper--align);
+    background-color: transparent;
+    padding: var(--card__padding);
+    gap: var(--card__gap);
+    text-align: var(--card__text--align);
+    border-radius: var(--card__border--radius);
+    box-sizing: border-box;
+    width: var(--card__width);
+    height: var(--card__height);
+    z-index: 3;
+  }
+  
+  .card {
+    @extend %baseCard;
+
+    &__wrapper--row {
+      --card__direction: row;
+      --card__wrapper--justify: space-between;
+      --card__text--align: left;
+
+      .card__inner-wrapper {
+
+        &--left {
+          width: 180px;
+        }
+
+        &--right {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+          align-items: center;
+          width: fit-content;
+        }
+      }
+    }
+
+    &__wrapper--column {
+      --card__wrapper--justify: flex-start;
+      --card__direction: column;
+    }
+
+    // Custom    
+    &.card__fill--custom, &.card__outline--custom, &.card__fab--custom {
+      --card__bg--color: var(--card__bg--color);
+      --card__border--color: var(--card__border--color);
+      &.card--selectable {
+        &:hover {
+          background-color: var(--card__bg--color);
+          cursor: pointer;
+        }
+    
+        &:focus {
+          border: solid 2px var(--card__border--color);
+        }
+      }
+    }
+
+    // Variant
+    &.card__fill {
+      
+      &--primary {
+      --card__border--color: var(--primary);
+        &.card--selectable {
+          &:hover {
+            --card__bg--color: var(--primaryLight);
+            background-color: var(--card__bg--color);
+          }
+          
+          &:focus {
+            border: solid 2px var(--card__border--color);     
+          }
+        }
+      }
+      
+      &--secondary {
+      --card__border--color: var(--secondary);
+        &.card--selectable {
+          &:hover {
+            --card__bg--color: var(--secondaryLight);
+            background-color: var(--card__bg--color);
+          }
+          
+          &:focus {
+            border: solid 2px var(--card__border--color);     
+          }
+        }
+      }
+      
+      &--tertiary {
+      --card__border--color: var(--tertiary);
+        &.card--selectable {
+          &:hover {
+            --card__bg--color: var(--tertiaryLight);
+            background-color: var(--card__bg--color);
+          }
+          
+          &:focus {
+            border: solid 2px var(--card__border--color);     
+          }
+        }
+      }
+    
+      &--info {
+      --card__border--color: var(--info);
+        &.card--selectable {
+          &:hover {
+            --card__bg--color: var(--info--light);
+            background-color: var(--card__bg--color);
+          }
+          
+          &:focus {
+            border: solid 2px var(--card__border--color);     
+          }
+        }
+      }
+      
+    &--neutral {
+    --card__border--color: var(--neutral);
+      &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--neutral--light);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+  }
+  
+    &.card__outline {
+      
+      &--primary {
+      --card__border--color: var(--card__text--color);
+      border: solid 2px var(--card__border--color);
+      &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--primaryLighter);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+    
+    &--secondary {
+      --card__border--color: var(--secondary);
+      &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--secondaryLighter);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+      
+    &--tertiary {
+      --card__border--color: var(--tertiary);
+      &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--tertiaryLighter);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+
+    &--info {
+      --card__border--color: var(--info);
+      &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--info--light);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+      
+    &--neutral {
+      --card__border--color: var(--neutral);
+      &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--neutral--light);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+  }
+
+  &.card__fab {
+    animation: fade-in 1.5s ease-in;
+    
+    // Severities
+      &--success {
+        --card__border--color: var(--success);
+        --card__bg--color: var(--success--light);
+        background-color: var(--card__bg--color);
+        &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--success--dark);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+
+      &--warning {
+        --card__border--color: var(--warning);
+        --card__bg--color: var(--warning--light);
+        background-color: var(--card__bg--color);
+        &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--warning--dark);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+
+      &--danger {
+        --card__border--color: var(--danger);
+        --card__bg--color: var(--danger--light);
+        background-color: var(--card__bg--color);
+        &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--danger--dark);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+
+      &--info {
+        --card__border--color: var(--info);
+        --card__bg--color: var(--info--light);
+        background-color: var(--card__bg--color);
+        &.card--selectable {
+        &:hover {
+          --card__bg--color: var(--info--dark);
+          background-color: var(--card__bg--color);
+        }
+        
+        &:focus {
+          border: solid 2px var(--card__border--color);     
+        }
+      }
+    }
+  }
+    
+  &.card--selected {
+    border: solid 2px var(--card__border--color);     
+    background-color: var(--card__bg--color);
+  }
+
+    // Sizes
+    &--xs {
+      --card__width: 90px;
+      --card__padding: 12px;
+      --card__height: 100%;
+      background-color: #f1f4f5;
+      width: var(--card__width);
+      height: var(--card__height);
+    }
+
+    &--sm {
+      --card__padding: 6px 14px;
+    }
+
+    &--md {
+      --card__padding: 0 0 0 12px;
+      --card__width: 100%;
+      --card__height: 100%;
+
+      width: var(--card__width);
+      height: var(--card__height);
+
+      .label__content {
+        row-gap: 4px;
+      }
+    }
+
+    &--lg {
+      --card__padding: 10px 18px;
+    }
+
+    &--xl {
+      --card__padding: 12px 24px;
+    }
+
+    // Images
+    > img {
+      margin-bottom: .75rem;
+      object-fit: cover;
+    }
+  }
+}

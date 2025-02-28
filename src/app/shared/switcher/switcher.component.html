@@ -1,0 +1,5 @@
+<section class="switcher" [class.switcher--disabled]="disabled">
+    <input type="checkbox" [checked]="on" (click)="onToggle()">
+    <span class="slider round"></span>
+    <label for="" class="switcher__label switcher__label--right switcher--{{ size }} {{ on ? 'switcher--on' : 'switcher--off' }}" *ngIf="labelPosition === 'right'">{{ on ? onLabel : offLabel }}</label>
+</section>

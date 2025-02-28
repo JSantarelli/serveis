@@ -1,0 +1,171 @@
+// Consider usign @use or/and migrate this to a shared scss file
+%baseFlex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+app-label {
+  width: 100%;
+  // overflow: hidden;
+
+  .label {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: fit-content;
+   
+    // Direccionalidad
+    &.row {
+      flex-direction: row;
+      align-items: center;
+      column-gap: .65rem;
+
+      > .label__icon {
+        --label__icon--align: center;
+      }
+    }
+    
+    &.column {
+        --button__text--align: center;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        row-gap: var(--label__gap);
+        text-align: center;
+      }
+          
+      &.xxs {
+        --label__prefix--size: 8px;
+        --label__subtitle--size: 10px;
+        --label__icon--size: 12px;
+      }
+          
+      &.xs {
+        --label__prefix--size: 10px;
+        --label__subtitle--size: 11px;
+        --label__icon--size: 14px;
+      }
+      
+      &.sm {
+        --label__prefix--size: 11px;
+        --label__subtitle--size: 12px;
+        --label__icon--size: 16px;
+
+        > .label__content {
+          row-gap: 6px;
+        }
+      }
+      
+      &.md {
+        --label__prefix--size: 12px;
+        --label__subtitle--size: 14px;
+        --label__icon--size: 36px;
+
+        > .label__content {
+          row-gap: 8px;
+        }
+      }
+      
+      &.lg {
+        --label__prefix--size: 14px;
+        --label__subtitle--size: 16px;
+        --label__icon--size: 56px;
+      }
+      
+      &.xl {
+        --label__prefix--size: 18px;
+        --label__subtitle--size: 20px;
+        --label__icon--size: 64px;
+      }
+  
+      &__icon { 
+        @extend %baseFlex;     
+        padding: .5rem;
+        border: solid 2px var(--label__icon--color);
+        border-radius: 50%;
+        color: var(--label__icon--color);
+        width: var(--label__icon--size);
+        height: var(--label__icon--size);
+        align-self: var(--label__icon--align);
+  
+        &.icon__border--none {
+          border: none;
+        }
+      }
+  
+      &.column {
+        .label__icon {
+          --label__icon--align: center;
+        }
+      }
+    
+      &__content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+        line-height: 1.5;
+        width: var(--label__width);
+      }
+    
+      &__prefix {
+        font-size: var(--label__prefix--size);
+        color: var(--label__prefix--color);
+        text-transform: uppercase;
+      }
+      
+      &__title {
+        color: var(--label__title--color);
+        font-weight: 600;
+        line-height: 1.25;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        text-overflow: ellipsis;
+        overflow: hidden;   
+        // text-wrap: nowrap;
+      }
+    
+      &__subtitle {
+        font-size: var(--label__subtitle--size);
+        color: var(--label__subtitle--color);
+        width: -webkit-fill-available;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+}
+
+  // Checkear uso y considerar mover a layout.scss
+  .button__group {
+    --panel__direction: row;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    column-gap: var(--wrapper__gap--col);
+    width: 100%;
+  }   
+
+  
+  $sizes: xxs xs sm md lg xl;
+  $fontSizes: (
+      "xxs": 12px,
+      "xs": 14px,
+      "sm": 16px,
+      "md": 20px,
+      "lg": 30px,
+      "xl": 40px,
+  );  
+  
+  @each $size in $sizes {
+      .label.#{$size} {
+          font-size: map-get($fontSizes, $size);
+      }
+  }

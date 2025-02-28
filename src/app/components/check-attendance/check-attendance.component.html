@@ -1,113 +1,144 @@
-<!-- check-attendance.component.html -->
-<div class="container">
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h4>Registro de Asistencia</h4>
-            <span class="badge bg-primary">{{ todayDate | date:'dd/MM/yyyy' }}</span>
+<form [formGroup]="form" class="panel__main" (ngSubmit)="createRegistro()">
+  <header class="{{ isMobile ? 'panel__header--col' : 'panel__header--row' }}">
+      <app-label
+      [size]="isMobile ? 'md' : 'lg'"
+      [label]="'Nuevo registro'"
+      [prefix]="'Autoregistro'"
+      subtitle="Completa los campos requeridos (*)"
+      [severity]="'info'"
+      direction="row"
+    ></app-label>
+    <!-- Integrar con validators -->
+     @if (form.invalid) {
+       <app-badge severity="warning" label="Campos requeridos sin completar" size="md"></app-badge>
+     } @else if (!form.invalid) {
+       <app-badge severity="success" label="Campos requeridos completos" size="md"></app-badge>
+     }
+  </header>
+ <section class="panel__inner--main">
+    <div id="map" style="width: 100%; height: 100%;"></div>
+    <section class="panel__inner--aside">
+       <div class="form__input-wrapper--col">
+         <app-required [label]="'Fecha'" [control]="'fecha'"></app-required>
+         <input type="date" formControlName="fecha">
+         <small class="required" *ngIf="form.controls['fecha']?.invalid && form.controls['fecha']?.touched">
+           Debe seleccionar una fecha
+         </small>
+       </div>
+       <div class="form__input-wrapper--col">
+         <app-required [label]="'Hora'" [control]="'hora'"></app-required>
+         <input type="time" formControlName="hora">
+         <small class="required" *ngIf="form.controls['hora']?.invalid && form.controls['hora']?.touched">
+           Debe seleccionar un horario
+         </small>
+       </div>
+
+        @if (currentLocation) {
+          <div>
+            <label for="latitud">Latitud</label>
+            <input
+              id="latitud"
+              type="number"
+              [value]="form.get('ubicacionActual')?.value?.latitud"
+              (input)="updateLocation('latitud', $event)">
           </div>
-          <div class="card-body">
-            <div *ngIf="isLoading" class="text-center my-3">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando...</span>
-              </div>
-              <p class="mt-2">Obteniendo ubicación...</p>
-            </div>
-            
-            <div *ngIf="!isLoading && currentEmployee" class="attendance-status">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="employee-info mb-3">
-                    <h5>{{ currentEmployee.nombre }} {{ currentEmployee.apellido }}</h5>
-                    <p class="text-muted">{{ currentEmployee.rol }}</p>
-                  </div>
-                  
-                  <div class="status-info mb-4">
-                    <h6>Estado de hoy</h6>
-                    <div class="d-flex align-items-center">
-                      <span class="status-indicator" 
-                            [ngClass]="{
-                              'bg-success': todayAttendance?.estado === 'Presente',
-                              'bg-danger': todayAttendance?.estado === 'Ausente',
-                              'bg-warning': todayAttendance?.estado === 'Tarde',
-                              'bg-info': todayAttendance?.estado === 'Licencia'
-                            }">
-                      </span>
-                      <span class="ms-2">{{ todayAttendance?.estado || 'Sin registrar' }}</span>
-                    </div>
-                  </div>
-                  
-                  <div class="location-info mb-4" *ngIf="currentLocation">
-                    <h6>Ubicación actual</h6>
-                    <p>
-                      <i class="bi bi-geo-alt-fill me-2"></i>
-                      Lat: {{ currentLocation.latitud | number:'1.6-6' }}, 
-                      Lng: {{ currentLocation.longitud | number:'1.6-6' }}
-                    </p>
-                    <button class="btn btn-sm btn-outline-secondary" (click)="refreshLocation()">
-                      <i class="bi bi-arrow-clockwise me-1"></i> Actualizar ubicación
-                    </button>
-                  </div>
-                  
-                  <div class="check-buttons mt-4">
-                    <button class="btn btn-success me-3" 
-                            [disabled]="isLoading || todayAttendance?.ingreso" 
-                            (click)="checkIn()">
-                      <i class="bi bi-box-arrow-in-right me-2"></i>
-                      Registrar Ingreso
-                    </button>
-                    
-                    <button class="btn btn-danger" 
-                            [disabled]="isLoading || !todayAttendance?.ingreso || todayAttendance?.salida" 
-                            (click)="checkOut()">
-                      <i class="bi bi-box-arrow-right me-2"></i>
-                      Registrar Salida
-                    </button>
-                  </div>
-                  
-                  <div class="attendance-details mt-4" *ngIf="todayAttendance?.ingreso">
-                    <h6>Detalles de asistencia</h6>
-                    <div class="time-details">
-                      <div class="row">
-                        <div class="col-6">
-                          <small class="text-muted">Hora de ingreso</small>
-                          <p *ngIf="todayAttendance?.ingreso">
-                            {{ todayAttendance.ingreso?.timestamp | date:'HH:mm' }}
-                          </p>
-                        </div>
-                        <div class="col-6">
-                          <small class="text-muted">Hora de salida</small>
-                          <p *ngIf="todayAttendance?.salida; else pendingSalida">
-                            {{ todayAttendance.salida?.timestamp | date:'HH:mm' }}
-                          </p>
-                          <ng-template #pendingSalida>
-                            <p class="text-muted">Pendiente</p>
-                          </ng-template>
-                        </div>
-                      </div>
-                      
-                      <div class="row mt-2" *ngIf="todayAttendance?.horasTrabajadas">
-                        <div class="col-6">
-                          <small class="text-muted">Horas trabajadas</small>
-                          <p>{{ todayAttendance.horasTrabajadas }} hs</p>
-                        </div>
-                        <div class="col-6" *ngIf="todayAttendance?.horasExtras">
-                          <small class="text-muted">Horas extras</small>
-                          <p>{{ todayAttendance.horasExtras }} hs</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="col-md-6">
-                  <div id="attendance-map" style="height: 400px;"></div>
-                </div>
-              </div>
-            </div>
+          
+          <div>
+            <label for="longitud">Longitud</label>
+            <input
+              id="longitud"
+              type="number"
+              [value]="form.get('ubicacionActual')?.value?.longitud"
+              (input)="updateLocation('longitud', $event)">
           </div>
+          
+          <!-- <div>
+            <label for="timestamp">Timestamp</label>
+            <input
+              id="timestamp"
+              type="datetime-local"
+              [value]="form.get('ubicacionActual')?.value?.timestamp"
+              (input)="updateLocation('timestamp', $event.target.value)">
+          </div> -->
+          }
+          <div class="form__input-wrapper--col">
+            <app-required [label]="'Establecimiento'" [control]="'servicio'"></app-required>
+            <input type="text" formControlName="servicio">
+          </div>
+
+         <app-switcher
+             [on]="validado"
+             size="md"
+             [onLabel]="'Seleccionar ubicación manual'"
+             offLabel="Seleccionar ubicación manual"
+             labelPosition="right"
+         ></app-switcher>
+         <!-- @if (validado) {
+        <div class="input__group">
+            <label>City</label>
+            <select formControlName="ciudad" placeholder="city" [(ngModel)]="selectedCity">
+                <option value="0">--seleccione ciudad--</option>
+                <option *ngFor="let city of dropdownCity" [ngValue]="city">{{ city.name }}</option>
+            </select>
         </div>
-      </div>
-    </div>
-  </div>
+        <ng-container *ngFor="let city of dropdownCity">
+            <ng-container *ngIf="selectedCity.name === city.name">
+                <input formControlName="lat" type="text" [(ngModel)]="selectedCity.lat" [value]="selectedCity.lat"/>
+                <input formControlName="lng" type="text" [(ngModel)]="selectedCity.lng" [value]="selectedCity.lng"/>
+            </ng-container>
+        </ng-container>
+         } -->
+    </section>
+</section>
+      <!-- Desacoplar footer en componente -->
+   <footer class="panel__footer">
+     <div class="panel_cfooter--left">
+       <app-button
+         size="xs"
+         [severity]="'danger'"
+         [variant]="'outline'"
+         [icon]="'xmark'"
+         [direction]="isMobile ? 'none' : 'row'"
+         [label]="isMobile ? '' : 'Cancelar'"
+         [type]="'button'"
+         (clickEvent)="cancel()"
+       ></app-button>
+       @if (!registroId) {
+       <app-button
+         size="xs"
+         [severity]="'warning'"
+         [variant]="'outline'"
+         [icon]="'arrows-rotate'"
+         [direction]="isMobile ? 'none' : 'row'"
+         [label]="isMobile ? '' : 'Reset'"
+         [type]="'reset'"
+       ></app-button>
+       }
+     </div>
+     <div class="panel__footer--right">
+       @if (!registroId) {
+         <app-button
+         [type]="'button'"
+         size="xs"
+         [severity]="'primary'"
+         [variant]="'link'"
+         [icon]="'mobile-screen-button'"
+         [direction]="isMobile ? 'none' : 'row'"
+         [label]="'Recargar ubicación'"
+         ></app-button>
+       }
+       <app-button
+       [severity]="'success'"
+       type="submit"
+       [variant]="'fill'"
+       [label]="isMobile ? '' : 'Guardar'"
+       [direction]="isMobile ? 'none' : 'row'"
+       [icon]="registroId ? 'floppy-disk' : 'file-lines'"
+       [disabled]="form.invalid"
+       size="xs"
+       [path]="'item/' + registroId"
+     >
+     </app-button>
+     </div>
+ </footer>
+</form>

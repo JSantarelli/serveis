@@ -1,0 +1,20 @@
+    <app-card *ngFor="let notification of notifications; let i = index"
+        size="lg"
+        direction="row"
+        [variant]="'fab'"
+        bottom="20px"
+        left="50vw"
+        [severity]="notification.severity === 'danger' ? 'danger' : 'success'"
+        [closable]="hide"
+        [selectable]="showErrorMsg"
+        >
+        <app-label
+            size="xxs"
+            label="{{ notification.message }}"
+            [subtitle]="showErrorMsg ? 'Vuelva a intentar luego' : 'Será redirigido a sus registros'"
+            [icon]="notification.severity === 'danger' ? 'circle-exclamation' : 'circle-check'"
+            variant="outline"
+            direction="row"
+            severity="{{ notification.severity }}"
+        ></app-label>
+    </app-card>

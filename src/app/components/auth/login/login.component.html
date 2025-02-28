@@ -1,1 +1,99 @@
-<p>login works!</p>
+<section id="signIn" class="">
+  <span class="page__bg--overlay"></span>
+  <form class="page__panel--sidebar" [formGroup]="form" (ngSubmit)="logIn()">
+    <section type="flex">
+      <img src="./../../../assets/img/serveis_logo-h.jpg" class="panel__img--center" width="84" height="160" alt="logo serveis">
+      <app-label
+      size="md"
+      [prefix]="'Ingreso'"
+      [label]="'Bienvenido'"
+      subtitle="Aquí comienza tu historia de Salud"
+      [direction]="'column'"
+    ></app-label>
+    </section>
+    <section type="flex">
+      <div class="form__input-wrapper--col">
+          <app-required [label]="'Email'" [control]="'email'"></app-required>
+          <input type="email" formControlName="email" />
+          <small class="required" *ngIf="isEmailValid as messsage">{{ messsage }}</small>
+      </div>
+      <div class="form__input-wrapper--row">
+        <div class="form__input-wrapper--col">
+          <app-required [label]="'Contraseña'" [control]="'password'"></app-required>
+          <input
+            [type]="hide ? 'password' : 'text'"
+            formControlName="password"
+          />
+          <small class="required" *ngIf="form.controls['password']?.invalid && form.controls['password']?.touched">
+            La contraseña es obligatoria
+          </small>
+        </div>
+            <app-button
+            size="sm"
+            [severity]="'primary'"
+            [variant]="'outline'"
+            [icon]="'eye'"
+            [direction]="'none'"
+            (click)="hide = !hide"
+            >
+          </app-button>
+      </div>
+      <app-button
+      size="xxs"
+      [severity]="'secondary'"
+      [variant]="'link'"
+      [icon]="'key'"
+      [direction]="'row'"
+      [label]="'Recuperar contraseña'"
+      [disabled]="true"
+      ></app-button>
+    </section>
+      <footer class="panel__footer">
+          <app-button
+            size="xxs"
+            [severity]="'primary'"
+            [variant]="'link'"
+            [icon]="'user-plus'"
+            [direction]="'row'"
+            [label]="'Registrarse'"
+            [path]="'register'"
+            ></app-button>
+            <app-button
+            severity="success"
+            type="submit"
+            variant="fill"
+            [bottom]="'24px'"
+            [right]="'24px'"
+            [direction]="'row'"
+            icon="user"
+            [label]="'Acceder'"
+            size="xxs"
+            [disabled]="form.invalid"
+            >
+          </app-button>
+    </footer>
+
+  </form>
+    <!-- Notificación -->
+     @if (errorMessage) {
+       <app-card
+           size="lg"
+           direction="row"
+           [variant]="'fab'"
+           bottom="20px"
+           left="calc(50vw - 180px)"
+           [severity]="errorMessage ? 'danger' : 'success'"
+           [closable]="hide"
+         >
+           <app-label
+             size="xxs"
+             [label]="errorMessage ? 'No se ha podido autenticar el usuario' : 'El usuario ha sido creado exitosamente'"
+             [subtitle]="errorMessage ? errorMessage : successMessage"
+             [icon]="errorMessage ? 'alert-circle' : 'info-circle'"
+             variant="outline"
+             direction="row"
+             severity="danger"
+           ></app-label>
+       </app-card>
+     }
+</section>

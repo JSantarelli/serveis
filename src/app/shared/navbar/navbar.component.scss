@@ -1,0 +1,33 @@
+nav {
+
+    &.nav__wrapper--row {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        overflow-x: scroll;
+        column-gap: var(--wrapper__gap--col);
+    }
+
+    // Corroborar uso
+    &.nav__wrapper {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: var(--footer__height);
+        display: flex;
+        align-items: flex-end;
+        width: 420px;
+        box-sizing: border-box;
+        background-color: lightgray;
+        
+        .nav__list--row {
+            display: flex;
+            flex-direction: row;
+            height: 72px;
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+            background-color: steelblue;
+        }
+    }
+}

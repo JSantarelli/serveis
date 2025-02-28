@@ -1,0 +1,32 @@
+.dropdown-container {
+    position: relative;
+    
+    .dropdown-menu {
+      position: absolute;
+      z-index: 1000;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      width: 200px;
+      overflow: hidden;
+      
+      &.nested {
+        // Add styles for nested dropdowns if needed
+      }
+      
+      .dropdown-content {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        
+        app-label, app-card {
+          margin-bottom: 0.5rem;
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+  

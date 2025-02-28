@@ -1,0 +1,18 @@
+<button 
+  type="{{ type }}"
+  [disabled]="disabled"
+  [ngClass]="['button__size--' + size + ' ' + 'button__' + variant + '--' + severity]" 
+  [ngStyle]="setFabPositionStyles()"
+  (click)="handleClick()">
+    <app-label 
+      [icon]="icon"
+      [severity]="severity"
+      [label]="label"
+      [subtitle]="subtitle" 
+      [prefix]="prefix" 
+      [direction]="direction"
+      [size]="size">
+    </app-label>
+  <span *ngIf="badgeCount" class="button__badge">{{ badgeCount }}</span>
+</button>
+

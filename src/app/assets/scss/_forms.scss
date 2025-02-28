@@ -1,0 +1,142 @@
+.input__wrapper {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--wrapper__gap--col);
+  flex: 1;
+}
+
+form,
+fieldset,
+section,aside, div, header {
+  // considerar hacer un header / footer internos
+  &[type='flex'] {
+    display: flex;
+    flex-direction: column;
+    column-gap: var(--form__gap--col);
+    row-gap: var(--form__gap--row);
+    // padding: var(--form__padding);
+    box-sizing: border-box;
+    width: 100%;                                            
+    
+    div.form__input-wrapper ~ button {
+      align-self: flex-end;
+      width: 100%;
+    }
+  }
+
+  &[type='wrap'] {
+    display: flex;
+    flex-flow: wrap;
+    column-gap: var(--form__gap--col);
+    row-gap: var(--form__gap--row);
+
+    .form__input-wrapper--col {
+      flex: 1 1 160px;
+    }
+  }
+
+  &[type='grid'] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+
+  .form__input-wrapper--col {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--wrapper__gap--col);
+  }
+
+  .form__input-wrapper--row {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    height: fit-content;
+    overflow-x: hidden;
+    gap: var(--wrapper__gap);
+    align-items: flex-end;
+    justify-content: center;
+
+    >.form__input-wrapper--col {
+      flex: 1 1 160px;
+    }
+  }
+
+  fieldset {
+    grid-column: span 2;
+    padding: 1.25rem;
+  }
+
+  .btn-group--row {
+    align-items: flex-end;
+
+    button {
+      margin-top: 1.5rem;
+      white-space: pre-wrap !important;
+      height: min-content;
+
+      &.btn--tertiary {
+        text-decoration: none;
+      }
+    }
+  }
+
+  label {
+    --input__label--size: 14px;
+    font-size: var(--input__label--size);
+    color: var(--input__label--color);
+  }
+  
+  .required {
+    color: var(--danger--dark);
+  }
+  
+  input, textarea, select {
+    font-size: var(--input__font--size);
+    color: var(--input__font--color);
+    padding: var(--input__padding);
+    border: var(--input__border);
+    border-radius: var(--input__border--radius);
+    width: 100%;
+    box-sizing: border-box;
+
+    &.input__size--sm {
+      --input__font--size: 14px;
+      --input__padding: .5rem;
+      --input__border--radius: 4px;
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+  }
+
+  select {
+    &.form__select--custom {
+      appearance: none;
+      background-image: url('./../img/chevron-down-solid.svg');
+      background-size: 20px;
+      background-repeat: no-repeat;
+      background-position: calc(100% - 10px) center;
+      padding-right: 30px;
+    }
+  }
+  
+  td > span.required {
+    color: var(--danger--dark);
+    font-weight: bold;
+  }
+
+  footer {
+    button {
+      max-width: fit-content !important;
+    }
+  }
+
+  [type='form'] {
+    padding: 0 !important;
+    justify-content: flex-start;
+    height: 100%;
+  }
+}

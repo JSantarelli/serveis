@@ -1,89 +1,101 @@
-// auth.service.ts
-import { Injectable } from '@angular/core';
-import { Auth, authState, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from '@angular/fire/auth';
-import { Firestore, doc, getDoc, onSnapshot, DocumentReference, setDoc } from '@angular/fire/firestore';
-import { Observable, from, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
-import { Empleado } from '../models/employer';
+import { Injectable, inject } from '@angular/core';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import {
+  Auth,
+  AuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  UserCredential,
+  updateProfile,
+  authState,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from '@angular/fire/auth';
+
+export interface Credential {
+  name: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
+
 export class AuthService {
-  
-  constructor(
-    private auth: Auth,
-    private firestore: Firestore
-  ) {}
-  
   getCurrentUser() {
-    return authState(this.auth);
+    throw new Error('Method not implemented.');
   }
-  
-  getEmployeeById(id: string): Observable<Empleado | null> {
-    const docRef = doc(this.firestore, `empleados/${id}`);
-    
-    return new Observable<Empleado | null>(observer => {
-      const unsubscribe = onSnapshot(docRef, (snapshot) => {
-        const data = snapshot.data() as Empleado;
-        
-        // If data exists, send the employee object, else send null
-        if (data) {
-          observer.next({ ...data, id: snapshot.id });  // Return employee object
-        } else {
-          observer.next(null);  // Return null if no data found
-        }
-      }, error => {
-        observer.error(error);
+  constructor(private firestore: Firestore) {}
+
+  private auth: Auth = inject(Auth);
+
+  readonly authState$ = authState(this.auth);
+
+  async signUpWithEmailAndPassword(credential: Credential): Promise<void> {
+    try {
+      // Create the user with email and password
+      const userCredential: UserCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        credential.email,
+        credential.password
+      );
+
+      // Update the user's display name
+      if (userCredential.user) {
+        await updateProfile(userCredential.user, {
+          displayName: `${credential.name} ${credential.lastName}`,
+        });
+      }
+
+      // Save additional details to Firestore
+      const userRef = doc(this.firestore, `users/${userCredential.user?.uid}`);
+      await setDoc(userRef, {
+        uid: userCredential.user?.uid,
+        name: credential.name,
+        lastName: credential.lastName,
+        email: credential.email,
       });
-      
-      // Return the unsubscribe function for cleanup
-      return unsubscribe;
-    });
-  }  
-  
-  login(email: string, password: string): Observable<any> {
-    return from(signInWithEmailAndPassword(this.auth, email, password));
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
   }
-  
-  register(email: string, password: string, empleadoData: Partial<Empleado>): Observable<any> {
-    return from(createUserWithEmailAndPassword(this.auth, email, password)).pipe(
-      switchMap(credentials => {
-        const id = credentials.user.uid;
-        const docRef = doc(this.firestore, `empleados/${id}`);
-        const data: Partial<Empleado> = {
-          ...empleadoData,
-          id,
-          email,
-          fechaAlta: new Date(),
-          estado: 'Activo',
-          historialAsistencia: [],
-          licencias: [],
-          pedidosInsumos: [],
-          recibos: [],
-          notificaciones: []
-        };
-        
-        return from(setDoc(docRef, data)).pipe(
-          map(() => credentials)
-        );
-      })
+
+  logInWithEmailAndPassword(credential: Credential) {
+    return signInWithEmailAndPassword(
+      this.auth,
+      credential.email,
+      credential.password
     );
   }
-  
-  logout(): Observable<void> {
-    return from(signOut(this.auth));
+
+  logOut(): Promise<void> {
+    return this.auth.signOut();
   }
-  
-  // Get current user's role
-  getCurrentUserRole(): Observable<string | null> {
-    return this.getCurrentUser().pipe(
-      switchMap(user => {
-        if (!user) return of(null);
-        return this.getEmployeeById(user.uid).pipe(
-          map(employee => employee ? employee.rol : null)
-        );
-      })
-    );
+
+  // providers
+  signInWithGoogleProvider(): Promise<UserCredential> {
+    const provider = new GoogleAuthProvider();
+
+    return this.callPopUp(provider);
+  }
+
+  signInWithGithubProvider(): Promise<UserCredential> {
+    const provider = new GithubAuthProvider();
+
+    return this.callPopUp(provider);
+  }
+
+  async callPopUp(provider: AuthProvider): Promise<UserCredential> {
+    try {
+      const result = await signInWithPopup(this.auth, provider);
+
+      return result;
+    } catch (error: any) {
+      return error;
+    }
   }  
 }

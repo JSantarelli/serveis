@@ -1,0 +1,40 @@
+<header id="main">
+    <section class="flex--row">
+      <img *ngIf="!isMobile" src="{{ brandDesktop }}" alt="" width="234" height="37" />
+      <img *ngIf="isMobile" src="{{ brandMobile }}" alt="" width="45" height="45" />
+    </section>
+    <!-- Badges -->
+    <section class="header__wrapper--right">
+      @if (loggedUser && !isMobile) {
+        <!-- Mostrar iniciales en mobile -->
+        <app-label 
+          [icon]="isMobile ? '' : 'user'" 
+          iconLabel="user" 
+          label="JS"
+          subtitle="{{ email }}" 
+          direction="row"
+          size="xxs">
+        </app-label>
+      }
+      <app-dropdown
+        [items]="getMenuItems()"
+        [position]="dropdownPosition"
+        buttonLabel=""
+        buttonIcon="bars"
+      ></app-dropdown>
+    </section>
+</header>
+@if (isModalOpen) {
+  <app-modal
+    [prefix]="'Salir de experienciaPaciente'"
+    [title]="'¿Desea cerrar su sesión?'"
+    [subtitle]="'Presione \'Cerrar sesión\' para salir o \'Cancelar\' para continuar en experienciaPaciente.'"
+    icon="right-from-bracket"
+    [closeable]="false"
+    (closeModal)="isModalOpen = false"
+  >
+    <!-- Footer buttons using app-button -->
+    <app-button direction="none" size="sm" label="Cancelar" variant="outline" severity="danger" (click)="isModalOpen = false"></app-button>
+    <app-button direction="none" size="sm" label="Cerrar sesión" variant="fill" severity="success" (click)="onConfirm()"></app-button>
+  </app-modal>
+}

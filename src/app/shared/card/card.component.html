@@ -1,0 +1,6 @@
+<div tabindex="0" #cardColor class="card card__{{ variant }}--{{ severity }} card--{{ size }}" [ngStyle]="setFabPositionStyles()" [ngClass]="cssDirection" [class.card--selectable]="selectable" [class.card--selected]="selected" (click)="onCardClick()">
+    <ng-content select="app-label"></ng-content>
+    @if (closable) {
+        <app-button variant="link" icon="close" size="xs" severity="neutral" (click)="closeCard($event)"></app-button>
+    }
+</div>

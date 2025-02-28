@@ -1,0 +1,49 @@
+<div class="dropdown-container">
+    <app-button
+        [size]="buttonSize"
+        [severity]="buttonSeverity"
+        [variant]="buttonVariant"
+        [direction]="buttonDirection"
+        (click)="toggle($event)"
+        [icon]="buttonIcon"
+        [label]="buttonLabel"
+    ></app-button>
+    <div
+      class="dropdown-menu"
+      [ngStyle]="{ top: position?.top, left: position?.left }"
+      *ngIf="isOpen"
+    >
+      <div
+        class="dropdown-content"
+        [ngClass]="{'nested': hasNestedItems}"
+      >
+        <ng-container *ngFor="let item of items">
+          <ng-container *ngIf="!item.subItems; else nestedItems">
+              <app-button
+              [variant]="'link'"
+              [direction]="'row'"
+              [size]="'xxs'"
+              [icon]="item.icon"
+              [label]="item.label"
+              [path]="item.path"
+              [disabled]="item.disabled"
+              (clickEvent)="item.callback ? item.callback() : null"
+            ></app-button>
+          </ng-container>
+          <ng-template #nestedItems>
+            <app-button
+              [variant]="'link'"
+              [direction]="'row'"
+              [size]="'xxs'"
+              [icon]="item.icon"
+              [label]="item.label"
+              [path]="item.path"
+              [disabled]="item.disabled"
+              (clickEvent)="item.callback ? item.callback() : null"
+            ></app-button>
+          </ng-template>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  

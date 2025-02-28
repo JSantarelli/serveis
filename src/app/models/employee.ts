@@ -1,9 +1,9 @@
 type Rol = 'Administrador' | 'Supervisor' | 'Empleado';
 
-export interface Ubicacion {
-    latitud: number;
-    longitud: number;
-    timestamp: Date;
+export interface Ubicacion{
+    latitud?: number | null | undefined;
+    longitud?: number | null | undefined;
+    timestamp?: Date;
 }
 
 export interface Asistencia {
@@ -62,12 +62,15 @@ export interface Empleado {
     email: string;
     telefono: string;
     rol: Rol;
-    fechaAlta: Date;
+    servicio: string;
+    fecha: Date;
+    hora: string;
     estado: 'Activo' | 'Suspendido' | 'Baja';
-    ubicacionActual?: Ubicacion; // Si está en servicio
-    historialAsistencia: Asistencia[];
-    licencias: Licencia[];
-    pedidosInsumos: PedidoInsumo[];
-    recibos: ReciboSueldo[];
-    notificaciones: Notificacion[];
+    ubicacionActual?: Ubicacion;
+    adjuntos: string[]
+    // historialAsistencia: Asistencia[];
+    // licencias: Licencia[];
+    // pedidosInsumos: PedidoInsumo[];
+    // recibos: ReciboSueldo[];
+    // notificaciones: Notificacion[];
 }

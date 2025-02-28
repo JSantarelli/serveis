@@ -1,0 +1,41 @@
+app-badge {
+  [class^="badge__wrapper"] {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5em 1em;
+      border-radius: 6px;
+      font-weight: normal;
+      font-size: var(--badge__font--size);
+      align-self: center;
+      text-wrap: nowrap;
+      text-overflow: ellipsis;
+    
+      // &--xs {
+      //   padding: 0.25em 0.5em;
+      // }
+    
+      // &--sm {
+      //   font-size: var(--badge__font--size);
+      //   padding: 0.4em 0.8em;
+      // }
+    
+      // &--md {
+      //   font-size: var(--badge__font--size);
+      // }
+    
+      // &--lg {
+      //   font-size: var(--badge__font--size);
+      //   padding: 0.6em 1.2em;
+      // }
+    
+      // &--xl {
+      //   font-size: var(--badge__font--size);
+      //   padding: 0.75em 1.5em;
+      // }
+    
+      i {
+        margin-right: 0.5em;
+      }
+    }
+}
+  

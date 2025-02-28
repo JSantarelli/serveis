@@ -1,0 +1,28 @@
+<!-- Unificar criterios de anidación de clases utilizando BEM -->
+<section class="panel__header">
+  <span #labelColor class="label" [ngClass]="[size, direction, severity]">
+    @if (icon) {
+      <div class="label__icon" [ngClass]="label ? '' : 'icon__border--none'">
+        <i class="fa-solid fa-{{ icon }}" [attr.aria-label]="iconLabel"></i>
+      </div>
+    }
+    <div class="label__content">
+      @if (prefix) {
+          <div class="label__prefix">{{ prefix }}</div>
+      }
+      @if (label) {
+          <div class="label__title">{{ label }}</div>
+      }
+      @if (subtitle) {
+          <div class="label__subtitle">{{ subtitle }}</div>
+      }
+     <span class="button__group">
+       <ng-content select="app-badge"></ng-content>
+     </span>
+    </div>
+    <div class="label__menu">
+      <ng-content select="app-button"></ng-content>
+      <ng-content select="app-dropdown"></ng-content>
+    </div>
+  </span>
+</section>

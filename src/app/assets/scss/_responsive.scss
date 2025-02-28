@@ -1,0 +1,99 @@
+@media screen and (min-width: 768px) {
+    
+    .page__panel--sidebar {
+        --panel__padding: 24px;
+        --wrapper__gap--row: 24px;
+        max-width: 420px;
+        padding: var(--panel__padding);
+    }
+
+    .page__body {
+        .page__panel--main {
+
+            .panel__main {
+                column-gap: 140px;
+                // padding: var(--page__main--padding)!important;
+
+                article.panel__text--article {
+                    // padding-left: var(--label__icon--size);
+                    font-size: var(--panel__font--size);
+                    line-height: var(--panel__line--height);
+                    word-break: break-all;
+                  }
+                }
+            .panel__inner--main {
+                display: flex;
+                flex-direction: row;
+                column-gap: var(--panel__gap--row);
+                height: 100%;
+                width: 100%;
+
+                .panel__inner--aside {
+                    flex-direction: column;
+                    row-gap: var(--panel__gap--row);
+                    // flex: 1;
+                    height: 100%;
+                    width: 100%;
+
+                    .panel__inner--right {
+                        row-gap: var(--wrapper__gap--row);
+
+                    }
+                }
+            }
+        }
+    }
+
+    // Generics
+    form,
+    fieldset,
+    section,aside, div, header {
+        
+        input, textarea, select {
+            --input__font--size: 18px;
+            --input__padding: 12px 14px;
+            font-size: var(--input__font--size);
+            padding: var(--input__padding);
+        }
+
+        label {
+            --input__label--size: 16px;
+        }
+    // considerar hacer un header / footer internos
+    &[type='flex'] {
+        --form__gap--colum: 24px;
+        }
+    }
+
+    // Sign-in
+    #signIn {
+        padding: 2rem;
+        .page__panel--sidebar {
+            --panel__height--center: 84vh!important;
+            height: var(--panel__height--center);
+            border-radius: var(--panel__border--radius);
+        }
+    }
+
+    #signUp {
+
+        .page__panel--float {
+            --panel__padding: 48px!important;
+            --panel__width: 72vw!important;
+            --panel__height: fit-content!important;
+            
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr))!important;
+
+            width: var(--panel__width);
+            height: var(--panel__height);
+            max-height: var(--panel__height);
+            border-radius: var(--panel__border--radius)!important;
+
+            box-sizing: unset!important;
+
+            .panel__img--center {
+                align-self: flex-start!important;
+            }
+        }
+    }
+}
