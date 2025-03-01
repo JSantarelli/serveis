@@ -13,6 +13,7 @@ import { RegisterComponent } from './components/auth/register/register.component
 import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password.component';
 import { AttendanceReportComponent } from './components/reports/attendance-report/attendance-report.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { HomeComponent } from './components/home/home.component';
 
 
 export const routes: Routes = [
@@ -23,10 +24,10 @@ export const routes: Routes = [
   
   // Main routes (protected by auth)
   { 
-    path: '', 
+    path: '', component: HomeComponent,
     // canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: '/check-attendance', pathMatch: 'full' },
+      { path: '', redirectTo: '/home', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'check-attendance', component: CheckAttendanceComponent },
       
@@ -34,7 +35,7 @@ export const routes: Routes = [
       { 
         path: 'employees', 
         children: [
-          { path: '', component: EmployeeListComponent },
+          { path: 'list', component: EmployeeListComponent },
           { path: 'profile/:id', component: EmployeeProfileComponent }
         ] 
       },

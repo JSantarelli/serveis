@@ -23,6 +23,7 @@ import { Location } from '@angular/common';
 import { RequiredComponent } from 'src/app/shared/required/required.component';
 import { CardComponent } from 'src/app/shared/card/card.component';
 import { NotificationService } from './../../services/notificacion.service';
+import { EmployeeListComponent } from '../employee-list/employee-list.component';
 
 export interface EmpleadoForm {
   nombre: FormControl<string>;
@@ -55,7 +56,8 @@ export interface EmpleadoForm {
     SwitcherComponent,
     RequiredComponent,
     CommonModule,
-    CardComponent
+    CardComponent,
+    EmployeeListComponent
   ],
 })
 export class CheckAttendanceComponent implements OnInit {
@@ -279,7 +281,7 @@ export class CheckAttendanceComponent implements OnInit {
       registro.adjuntos = registro.adjuntos.filter((url: string) => this.isValidUrl(url));
   
       if (user) {
-        registro.id = user.uid;
+        registro.userId = user.uid;
       }
   
       if (!this.registroId) {

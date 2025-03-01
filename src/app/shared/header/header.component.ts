@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, inject, HostListener } from '@angular/core';
 import { LabelComponent } from '../label/label.component';
-import { AuthService } from 'src/app/core/services/auth.service';
+import { AuthService } from './../../../app/services/auth.service';
 import { ButtonComponent } from '../button/button.component';
 import { Auth, authState } from '@angular/fire/auth';
 import { Router } from '@angular/router';
@@ -24,8 +24,8 @@ import { ModalComponent } from '../modal/modal.component';
 })
 export class HeaderComponent implements OnInit {
 
-  @Input() brandDesktop: String = '';
-  @Input() brandMobile: String = './assets/img/ep__marca--sqr.png';
+  @Input() brandDesktop: String = './assets/img/serveis_logo-h.jpg';
+  @Input() brandMobile: String = './assets/img/serveis_logo-h.jpg';
 
   isMobile = false;
   loggedUser = true;
@@ -87,7 +87,7 @@ export class HeaderComponent implements OnInit {
   async logOut(): Promise<void> {
     try {
       await this.authservice.logOut();
-      this._router.navigateByUrl('/auth/sign-in');
+      this._router.navigateByUrl('/auth/login');
     } catch (error) {
         console.log(error);
     }

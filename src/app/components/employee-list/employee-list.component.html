@@ -1,19 +1,84 @@
-<div class="employee-list-container">
-    <h2>Employee List</h2>
-    <ul *ngIf="empleados$ | async as empleados; else loading">
-      <li *ngFor="let empleado of empleados">
-        <div class="employee-card">
-          <h3>{{ empleado.nombre }}</h3>
-          <p>Email: {{ empleado.email }}</p>
-          <p>Position: {{ empleado.rol }}</p>
-          <p>User ID: {{ empleado.id }}</p>
-          <!-- Add any other fields you want to display -->
-        </div>
+<section class="sidebar__header">
+  @if (loggedUser) {
+  <app-label
+      size="md"
+      [label]="'Estos son tus empleados'"
+      prefix="Hola {{ name }}"
+      direction="row">
+  </app-label>
+  }
+  <section class="input__group">
+      <span class="input__wrapper">
+        <label for="nombre">Buscador</label>
+        <input type="text" placeholder="Busca por título del empleado" class="input__size--sm"
+        [formControl]="searchControl">
+      </span>
+      <app-button type="button" [direction]="'none'" [icon]="medCategories ? 'chevron-up' : 'chevron-down'" size="xs" [variant]="'outline'" severity="primary" direction="none" (clickEvent)="showMedCategories($event)"></app-button>
+      <app-dropdown
+      [items]="getEmpleadoOptions()"
+      [position]="splitButtonPosition"
+      buttonSize="xs"
+      buttonDirection="none"
+      buttonVariant="fill"
+      buttonSeverity="success"
+      buttonIcon="plus"
+      ></app-dropdown>
+  </section>
+   @if (medCategories) {
+       <app-navbar [items]="servicioItems" (categorySelected)="onCategorySelected($event)"></app-navbar>
+   }
+  <hr>
+</section>
+<ng-container *ngIf="empleados$ | async as records">
+  <ul class="list__wrapper--center" *ngIf="!records.length">
+      <app-label
+          [size]="isMobile ? 'xs' : 'sm'"
+          [icon]="'pen-to-square'"
+          [prefix]="'Tus empleados'"
+          [label]="'Comienza a escribir tu historia de salud'"
+          subtitle="Aquí se listarán los datos de salud que registres manualmente o a través del QR facilitado por quién haya gestionado tu empleado de salud."
+          [direction]="'column'"
+      ></app-label>
+  </ul>
+  <ul class="list__wrapper--{{ type }}">
+      <!-- Resolver bubbling -->
+      <li *ngFor="let data of (filteredEmpleados$ | async); trackBy: trackByFn" (click)="onItemSelected(data)">
+          <app-card direction="row" [selectable]="true" [selected]="selectedItemId === data.id" [variant]="'fill'" severity="custom" [color]="getColorForServicio(data.servicio)" (cardSelected)="onCardSelected(data)">
+                  <app-label
+                  [size]="'xs'"
+                  [label]="data.nombre"
+                  [prefix]="data.servicio"
+                  [subtitle]="isMobile ? '' : data.estado"
+                  [icon]="getIconForServicio(data.servicio)"
+                  [severity]="'custom'"
+                  [color]="getColorForServicio(data.servicio)"
+                  direction="row">
+                  <app-badge [severity]="data.estado ? 'success' : 'info'" [label]="data.estado ? 'Validado' : 'Auto-empleado'" size="xs"></app-badge>
+                  @if (data.rol) {
+                      <app-badge severity="info" [label]="data.rol" size="xs" icon="hospital"></app-badge>
+                  }
+                  <app-button variant="icon" icon="trash-can" size="xs" severity="neutral" (click)="openModal($event, data)"></app-button>
+                  <app-dropdown
+                      [items]="getMenuItems(data)"
+                      [position]="dropdownPosition"
+                      buttonLabel=""
+                      buttonIcon="ellipsis-vertical"
+                  ></app-dropdown>
+              </app-label>
+          </app-card>
+          @if (isModalOpen) {
+              <app-modal
+                  [prefix]="'Eliminar empleado'"
+                  [title]="'¿Desea eliminar' + ' ' + data.nombre + '?'"
+                  [subtitle]="'Esta acción es irreversible, si elimina el empleado no podrá recuperar su contenido.'"
+                  [size]="isMobile ? 'sm' : 'md'"
+                  icon="trash-can"
+                  (closeModal)="isModalOpen = false"
+              >
+                  <app-button direction="none" size="sm" label="Cancel" variant="outline" severity="danger" (click)="isModalOpen = false"></app-button>
+                  <app-button direction="none" size="sm" label="Confirm" variant="fill" severity="success" (click)="onConfirm(data)"></app-button>
+              </app-modal>
+              }
       </li>
-    </ul>
-  
-    <ng-template #loading>
-      <p>Loading employees...</p>
-    </ng-template>
-  </div>
-  
+  </ul>
+</ng-container>

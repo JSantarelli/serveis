@@ -55,6 +55,7 @@ export interface Notificacion {
 
 export interface Empleado {
     id: string;
+    userId?: string;
     nombre: string;
     apellido: string;
     dni: string;
