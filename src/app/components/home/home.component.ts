@@ -3,24 +3,18 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { CheckAttendanceComponent } from '../../components/check-attendance/check-attendance.component';
 import { EmployeeListComponent } from '../../components/employee-list/employee-list.component';
-import { NavbarComponent } from './../../shared/navbar/navbar.component';
 import { HeaderComponent } from './../../shared/header/header.component';
 import { LabelComponent } from 'src/app/shared/label/label.component';
-import { CardComponent } from 'src/app/shared/card/card.component';
-import { ButtonComponent } from 'src/app/shared/button/button.component';
-import { BadgeComponent } from 'src/app/shared/badge/badge.component';
 
 @Component({
   selector: 'app-home',
   imports: [
     CheckAttendanceComponent,
     EmployeeListComponent,
-    RouterOutlet, HeaderComponent, NavbarComponent,
-    CardComponent,
-    LabelComponent,
-    ButtonComponent,
-    BadgeComponent,
-    CommonModule
+    RouterOutlet, 
+    HeaderComponent,
+    CommonModule,
+    LabelComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'

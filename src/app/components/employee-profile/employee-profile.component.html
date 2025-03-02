@@ -1,1 +1,164 @@
-<p>employee-profile works!</p>
+@if (empleado != null) {
+    <section class="panel__main">
+        <header class="panel__header--row">
+            <app-label
+                [size]="isMobile ? 'md' : 'lg'"
+                [label]="empleado.nombre"
+                [prefix]="empleado.servicio"
+                [icon]="getIconForCategoria(empleado.servicio)"
+                [severity]="'custom'"
+                [color]="getColorForCategoria(empleado.servicio)"
+                direction="row">
+                <app-badge [severity]="empleado.estado ? 'success' : 'info'" label="{{ empleado.estado ? 'estado' : 'auto-empleado' }}" size="xs"></app-badge>
+                <app-dropdown
+                    [items]="getMenuItems(empleado)"
+                    [position]="dropdownPosition"
+                    buttonLabel=""
+                    buttonIcon="ellipsis-vertical"
+                ></app-dropdown>        
+        </app-label>
+        </header>
+        <div class="panel__inner--main">
+            <article class="panel__text--article">
+                {{ empleado.rol }}
+                {{ empleado.apellido }}
+            </article>
+
+            <div #mapContainer style="width: 100%; height: 400px; min-height: 300px;"></div>
+            @if (empleado?.ubicacionActual) {
+                <!-- Resolver y mostrar timestamp -->
+            {{ empleado.ubicacionActual?.latitud }}
+            {{ empleado.ubicacionActual?.longitud }}
+        }
+
+        @if (empleado.adjuntos.length > 0) {
+                <app-label
+                    prefix="Adjuntos"
+                    label="Mis archivos"
+                    [size]="isMobile ? 'sm' : 'md'"
+                    direction="row"
+                >
+            </app-label>
+            <hr>
+            <section role="navigation" class="img__wrapper--grid">
+                <figure *ngFor="let file of empleado.adjuntos; trackBy: trackByFn" (click)="openModal(file)">
+                    <img [src]="file" alt="Uploaded Image">
+                    <figcaption>{{ file }}</figcaption>
+                </figure>
+            </section>
+            @if (isModalOpen) {
+            <app-modal
+                [prefix]="'Previsualizar'"
+                [title]="selectedFile"
+                [subtitle]="'Modal Subtitle'"
+                icon="info-circle"
+                [img]="selectedFile"
+                [closeable]="true"
+                (closeModal)="isModalOpen = false"
+            >
+                <app-button direction="none" size="sm" label="Eliminar" variant="outline" severity="danger" (click)="isModalOpen = false"></app-button>
+                <app-button direction="none" size="sm" label="Editar" variant="fill" severity="success"></app-button>
+            </app-modal>
+            }
+         }
+        </div>
+        @if (isMobile) {
+            <hr>
+        }
+        <div class="panel__inner--aside">
+            <article class="panel__inner--left">
+                <figure class="panel__qr--wrapper">
+                    <!-- Integración QR con portal-profesional -->
+                     @if (qrCodeUrl) {
+                         <img class="panel__qr--aside" [src]="qrCodeUrl" alt="QR Code" alt="">
+                     }
+                    <app-label
+                        [size]="'sm'"
+                        [prefix]="'Para escanear el código, accede a tu cuenta experienciaPaciente.org.'"
+                        [direction]="'row'"
+                        [severity]="'neutral'"
+                        [icon]="isMobile ? '' : 'info-circle'"
+                    >
+                    </app-label>
+                </figure>
+                <app-label
+                    size="md"
+                    [label]="empleado.fecha"
+                    [prefix]="'Fecha del empleado'"
+                    [direction]="'row'"
+                    >
+                </app-label>
+                @if (empleado.rol) {
+                    <app-label
+                    size="md"
+                    [label]="empleado.rol"
+                    [prefix]="'Establecimiento de Salud'"
+                    [direction]="'row'"
+                    >
+                </app-label>
+                }
+                <app-switcher
+                    [on]="true"
+                    size="lg"
+                    onLabel="Validado"
+                    offLabel="No estado"
+                    colorOn="green"
+                    colorOff="red"
+                    labelPosition="right"
+                    [disabled]="true"
+                ></app-switcher>
+                @if (empleado.estado === 'Activo') {
+                    <app-label
+                        size="md"
+                        [label]="empleado.estado"
+                        [prefix]="'Miembro equipo de Salud'"
+                        [direction]="'row'"
+                        >
+                    </app-label>
+                }
+            </article>
+        </div>
+        <!-- Desacoplar footer en componente -->
+        <footer class="panel__footer">
+            <div class="panel__footer--left">
+                <app-button
+                size="xs"
+                [severity]="'primary'"
+                [variant]="'link'"
+                [icon]="'arrow-left'"
+                [direction]="'row'"
+                [label]="'volver'"
+                [disabled]="false"
+                (clickEvent)="goBack()"
+                ></app-button>
+            </div>
+            <div class="panel__footer--right">
+                <app-button
+                size="xs"
+                [severity]="'warning'"
+                [variant]="'fill'"
+                [icon]="'pencil'"
+                [direction]="'row'"
+                [label]="'Editar'"
+                [path]="'actualizar/' + id"
+                [disabled]="false"
+                ></app-button>
+            </div>
+        </footer>
+        @if (modalDelete) {
+            <app-modal
+                [prefix]="empleado.servicio"
+                [title]="'¿Desea eliminar el empleado' + '' + empleado.nombre + '?'"
+                [subtitle]="'Esta acción es irreversible'"
+                icon="info-alert"
+                [closeable]="true"
+                (closeModal)="modalDelete = false"
+            >
+                <app-button direction="none" size="sm" label="Eliminar" variant="outline" severity="danger" (click)="modalDelete = false"></app-button>
+                <app-button direction="none" size="sm" label="Editar" variant="fill" severity="success" (click)="onConfirm()"></app-button>
+            </app-modal>
+            }
+    </section>
+    } @else {
+        <p>Sin empleados!</p>
+    }

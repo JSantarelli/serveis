@@ -432,16 +432,12 @@ export class CheckAttendanceComponent implements OnInit {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
   
-          // Update map view to current position
-          this.map.setView([lat, lng], 15);  // Adjust zoom level as needed
+          this.map.setView([lat, lng], 15);
   
-          // Optionally, add a marker at the current position
           const marker = L.marker([lat, lng]).addTo(this.map)
             .bindPopup('You are here')
             .openPopup();
-  
-          // Store the location in the form
-          const ubicacion: Ubicacion = {
+            const ubicacion: Ubicacion = {
             latitud: lat,
             longitud: lng,
             timestamp: new Date()
@@ -457,27 +453,10 @@ export class CheckAttendanceComponent implements OnInit {
       console.error('Geolocation is not supported by this browser.');
     }
   }
-  
 
   onSubmit() {
-    // Get the location from the form
     const ubicacion = this.form.value.ubicacionActual;
-
-    // Save the location to Firestore
-    // this.saveLocationToFirestore(ubicacion);
   }
-
-  // saveLocationToFirestore(location: { latitud: number, longitud: number, timestamp: Date }): void {
-  //   this.firestore.collection('locations').add({
-  //     latitud: location.latitud,
-  //     longitud: location.longitud,
-  //     timestamp: location.timestamp
-  //   }).then(() => {
-  //     console.log('Location saved to Firestore');
-  //   }).catch((error) => {
-  //     console.error('Error saving location to Firestore', error);
-  //   });
-  // }
 
   updateLocation(key: 'latitud' | 'longitud', event: Event) {
     const value = (event.target as HTMLInputElement).value;

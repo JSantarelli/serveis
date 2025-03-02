@@ -179,7 +179,7 @@ export class EmployeeListComponent implements OnInit {
   }
 
   onItemSelected(item: Empleado): void {
-    this.router.navigate([`/item/${item.id}`]);
+    this.router.navigate([`/employees/profile/${item.id}`]);
   }
 
   navigateToEdit(item: Empleado): void {

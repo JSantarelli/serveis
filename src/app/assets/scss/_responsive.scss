@@ -20,24 +20,22 @@
                     line-height: var(--panel__line--height);
                     word-break: break-all;
                   }
-                }
-            .panel__inner--main {
-                display: flex;
-                flex-direction: row;
-                column-gap: var(--panel__gap--row);
-                height: 100%;
-                width: 100%;
 
                 .panel__inner--aside {
                     flex-direction: column;
                     row-gap: var(--panel__gap--row);
-                    // flex: 1;
+                    flex: 1;
                     height: 100%;
-                    width: 100%;
 
                     .panel__inner--right {
                         row-gap: var(--wrapper__gap--row);
 
+                        .panel__qr--aside {
+                            width: 100%;
+                            max-width: 100%!important;
+                            background-color: white;
+                            border: solid 1px var(--neutral);
+                        }
                     }
                 }
             }

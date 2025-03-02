@@ -1,14 +1,16 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ButtonComponent } from '../button/button.component';
 import { CardComponent } from '../card/card.component';
 import { LabelComponent } from '../label/label.component';
-import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, ButtonComponent, LabelComponent, CardComponent, CommonModule],
+  imports: [
+    LabelComponent,
+    CardComponent,
+    CommonModule
+  ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })

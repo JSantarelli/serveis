@@ -7,19 +7,16 @@
         <app-list [type]="'flex'" [direction]="'horizontal'"></app-list>      
       </aside>
       <main class="page__panel--main" *ngIf="shouldShowMainPanel()" ngClass="{{currentView === 'list' ? 'center' : ''}}">
-        @if (currentView === 'list') {
-          <app-label
+          <!-- <app-label
             [icon]="'notes-medical'"
             [size]="isMobile ? 'sm' : 'md'"
             [prefix]="'Bienvenido'"
             [label]="'Aquí comienza tu historia de salud'"
             subtitle="En experienciaPaciente podrás registrar, compartir y recibir tus datos de salud sin tener que depender de ninguna institución pública o empresa privada."
             [direction]="'column'"
-        ></app-label>
-        } @else {
+        ></app-label> -->
           <router-outlet></router-outlet>
-        }
-      </main>
+        </main>
     </div>
   </div>
   

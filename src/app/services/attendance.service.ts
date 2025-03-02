@@ -13,7 +13,7 @@ export class AttendanceService {
 
   private _collection = collection(this._firestore, PATH); // Reference to 'empleados' collection
 
-  // Get all employees
+  // Get all employees (useful for an admin view)
   getEmpleados(): Observable<Empleado[]> {
     return collectionData(this._collection, { idField: 'id' }) as Observable<Empleado[]>;
   }
