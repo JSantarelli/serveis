@@ -2,7 +2,7 @@ import { Component, OnInit, inject, Input, HostListener } from '@angular/core';
 import { ItemComponent } from 'src/app/shared/item/item.component';
 import { LabelComponent } from 'src/app/shared/label/label.component';
 import { Empleado } from 'src/app/models/employee';
-import { Auth, authState } from '@angular/fire/auth';
+import { Auth, authState, User } from '@angular/fire/auth';
 import { Observable, map, startWith, combineLatest, of, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -16,6 +16,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ModalComponent } from 'src/app/shared/modal/modal.component';
 import { AttendanceService } from './../../services/attendance.service';
 import { NotificationService } from './../../services/notificacion.service';
+import { AuthService } from 'src/app/services/auth.service';
+
+export interface CustomUser extends User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  rol?: string | null;
+}
 
 @Component({
   selector: 'app-list',
@@ -35,6 +43,8 @@ import { NotificationService } from './../../services/notificacion.service';
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.scss'
 })
+
+
 export class EmployeeListComponent implements OnInit {
 
   empleado!: Empleado[];
@@ -43,43 +53,30 @@ export class EmployeeListComponent implements OnInit {
   isMobile!: boolean;
   email: string | null = null;
   name: string | null = null;
+  rol: string | null = null;
   filteredEmpleados$!: Observable<Empleado[]>;
   searchControl = new FormControl('');
   selectedCategory: string = '';
   medCategories!: boolean;
   selectedItemId: string | null = null;
   isModalOpen: boolean = false;
+  afs: any;
 
   onCardSelected(data: { id: string }) {
     this.selectedItemId = data.id;
   }
 
   private auth: Auth = inject(Auth);
+  private authservice = inject(AuthService);
   readonly authState$ = authState(this.auth);
   
   @Input() type?: 'flex' | 'grid' = 'flex';
   @Input() direction?: 'horizontal' | 'vertical' = 'horizontal';
 
-  servicioMap: { [key: string]: { icon: string; color: string } } = {
-    'Medicina General': { icon: 'user-md', color: '#007bff' }, // Blue
-    'Pediatría': { icon: 'baby', color: '#28a745' }, // Green
-    'Ginecología y Obstetricia': { icon: 'venus', color: '#e83e8c' }, // Pink
-    'Cardiología': { icon: 'heart', color: '#dc3545' }, // Red
-    'Dermatología': { icon: 'spa', color: '#fd7e14' }, // Orange
-    'Neurología': { icon: 'brain', color: '#6f42c1' }, // Purple
-    'Psiquiatría': { icon: 'comments', color: '#20c997' }, // Teal
-    'Endocrinología': { icon: 'balance-scale', color: '#ffc107' }, // Yellow
-    'Gastroenterología': { icon: 'stethoscope', color: '#795548' }, // Brown
-    'Traumatología y Ortopedia': { icon: 'crutch', color: '#6c757d' }, // Gray
-    'Oftalmología': { icon: 'eye', color: '#17a2b8' }, // Cyan
-    'Otorrinolaringología': { icon: 'head-side-cough', color: '#6610f2' }, // Indigo
-    'Urología': { icon: 'x-ray', color: '#007bff' }, // Blue
-    'Neumología': { icon: 'lungs', color: '#87ceeb' }, // Light Blue
-    'Oncología': { icon: 'ribbon', color: '#6f42c1' }, // Purple
-    'Nutrición y Dietética': { icon: 'utensils', color: '#a2d729' }, // Lime
-    'Fisiatría y Rehabilitación': { icon: 'dumbbell', color: '#fd7e14' }, // Orange
-    'Odontología': { icon: 'tooth', color: '#5fc8db' } // White
-  };
+  rolMap: { [key: string]: { icon: string; color: string } } = {
+    'Empleado': { icon: 'user-md', color: '#007bff' },
+    'Administrador': { icon: 'user', color: '#28a745' }
+  };  
 
   // Función que devuelve un array en lugar del array per-sé
   getMenuItems(data: Empleado): { label: string, icon?: string, subItems?: any[], path?: string, disabled: boolean, callback?: () => void } [] {
@@ -103,11 +100,11 @@ export class EmployeeListComponent implements OnInit {
   dropdownPosition = { top: '35px', left: '-170px' };
   splitButtonPosition = { top: '45px', left: '-160px' };
 
-  servicioItems = Object.keys(this.servicioMap).map(key => {
+  servicioItems = Object.keys(this.rolMap).map(key => {
     return {
       label: key,
-      icon: this.servicioMap[key].icon,
-      color: this.servicioMap[key].color,
+      icon: this.rolMap[key].icon,
+      color: this.rolMap[key].color,
       path: `/categories/${key}`,
       selectable: false,
     };
@@ -133,9 +130,16 @@ export class EmployeeListComponent implements OnInit {
         if (user) {
           this.email = user.email;
           this.name = user.displayName;
+          // Fetch role from Firestore
+          this.authservice.getUserData(user.uid).subscribe(userData => {
+            if (userData) {
+              this.rol = userData['rol'] || null;
+            }
+          });
         } else {
           this.email = null;
           this.name = 'Usuario';
+          this.rol = null;
         }
       });
   
@@ -211,11 +215,11 @@ export class EmployeeListComponent implements OnInit {
   }
 
   getIconForServicio(servicio: string): string {
-    return this.servicioMap[servicio]?.icon || 'question-circle';
+    return this.rolMap[servicio]?.icon || 'question-circle';
   }
 
   getColorForServicio(servicio: string): string {
-    return this.servicioMap[servicio]?.color || 'gray';
+    return this.rolMap[servicio]?.color || 'gray';
   }
 
   trackByFn(index: number, item: Empleado): string {

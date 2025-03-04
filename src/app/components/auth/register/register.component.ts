@@ -23,6 +23,7 @@ interface SignUpForm {
   email: FormControl<string>;
   password: FormControl<string>;
   confirmPassword: FormControl<string>;
+  rol: FormControl<string>;
 }
 
 @Component({
@@ -40,7 +41,22 @@ interface SignUpForm {
   templateUrl: './register.component.html',
   providers: [],
 })
+
+
+
 export class RegisterComponent {
+
+  // considerar utilizar un enum o crear una colección para especialidades
+  roles: string[] = [
+    'Administrador',
+    'Empleado'
+  ];
+
+  rolMap: { [key: string]: { icon: string; color: string } } = {
+    'Empleado': { icon: 'user-md', color: '#007bff' },
+    'Administrador': { icon: 'user', color: '#28a745' }
+  };  
+
   hide = true;
   isMobile = false;
   direction = 'column';
@@ -55,6 +71,16 @@ export class RegisterComponent {
   Mayúsculas: Debe incluir al menos una letra mayúscula (A-Z).
   Símbolos Especiales: Debe tener al menos un símbolo especial, como: ! @ # $ % ^ & * ( ) , . ? " : { } | < >.
 `;
+  editableCategory: string = '';
+  editableIcon: string = 'user';
+  editableColor: string = '';
+  hasChange: boolean = false;
+
+
+  rolOptions = Object.keys(this.rolMap).map((key) => ({
+    value: key,
+    label: key.replace(/([A-Z])/g, ' $1').trim(),
+  }));
 
   private router = inject(Router);
   private empleadoId = '';
@@ -76,10 +102,20 @@ export class RegisterComponent {
      validators: [Validators.required,
       this.passwordFormatValidator()]
     }),
+    rol: this.formBuilder.control('')
   });
 
   ngOnInit(): void {
     this.checkIfMobile(window.innerWidth);
+  }
+
+  onCategoryChange() {
+    const rol = this.form.controls['rol'].value;
+    if (rol) {
+      const { icon, color } = this.rolMap[rol];
+      this.editableCategory = rol;
+    }
+    this.hasChange = true;
   }
 
   checkIfMobile(width: number): void {
@@ -110,6 +146,7 @@ export class RegisterComponent {
       lastName: this.form.value.apellido || '',
       email: this.form.value.email || '',
       password: this.form.value.password || '',
+      rol: this.form.value.rol || '',
     };
     
     try {
@@ -117,7 +154,7 @@ export class RegisterComponent {
       this.showConfirmMsg = true;
   
       setTimeout(() => {
-        this.router.navigateByUrl('/ingresar');
+        this.router.navigateByUrl('/login');
       }, 1500);
       
     } catch (error) {

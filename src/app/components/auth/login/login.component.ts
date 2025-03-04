@@ -19,6 +19,7 @@ interface LoginForm {
   apellido: FormControl<string | null>;
   email: FormControl<string>;
   password: FormControl<string>;
+  rol: FormControl<string>;
 }
 
 @Component({
@@ -36,6 +37,11 @@ interface LoginForm {
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
+  // rolMap: { [key: string]: { icon: string; color: string } } = {
+  //   'Empleado': { icon: 'user-md', color: '#007bff' },
+  //   'Administrador': { icon: 'user', color: '#28a745' }
+  // }; 
+
   hide = true;
   successMessage = '';
   errorMessage = '';
@@ -56,6 +62,7 @@ export class LoginComponent {
       validators: Validators.required,
       nonNullable: true,
     }),
+    rol: this.formBuilder.control('', {nonNullable: true})
   });
 
   get isEmailValid(): string | boolean {
@@ -79,6 +86,7 @@ export class LoginComponent {
       lastName: this.form.value.email || '',
       email: this.form.value.email || '',
       password: this.form.value.password || '',
+      rol: this.form.value.rol || '',
     };
 
     try {

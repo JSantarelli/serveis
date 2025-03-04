@@ -1,9 +1,9 @@
 <section class="sidebar__header">
-  @if (loggedUser) {
+  @if (loggedUser && rol === 'administrador') {
   <app-label
       size="md"
       [label]="'Estos son tus empleados'"
-      prefix="Hola {{ name }}"
+      prefix="Hola {{ rol }}"
       direction="row">
   </app-label>
   }

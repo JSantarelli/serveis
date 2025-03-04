@@ -73,6 +73,22 @@
                 Las contraseñas no coinciden
               </small>
             </div>
+
+            <div class="form__input-wrapper--col">
+              <app-required [label]="'Categoría'" [control]="'rol'"></app-required>
+                <select class="form__select--custom" id="rol" formControlName="rol" (change)="onCategoryChange()">
+                <option value="" disabled selected>Seleccionar categoría</option>
+                @for (rol of roles; track rol) {
+                  <option [value]="rol">
+                    {{ rol }}
+                  </option>
+                }
+              </select>
+              <small class="required" *ngIf="form.controls['rol']?.invalid && form.controls['rol']?.touched">
+                La categoría es obligatoria
+              </small>
+            </div>
+
               <app-button
               [type]="'button'"
               size="sm"

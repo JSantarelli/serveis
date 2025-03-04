@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, docData, setDoc } from '@angular/fire/firestore';
 import {
   Auth,
   AuthProvider,
@@ -18,6 +18,7 @@ export interface Credential {
   lastName: string;
   email: string;
   password: string;
+  rol: string;
 }
 
 @Injectable({
@@ -25,6 +26,17 @@ export interface Credential {
 })
 
 export class AuthService {
+  
+  getUserData(uid: string) {
+    const userDocRef = doc(this.firestore, `users/${uid}`);
+    // Return an observable that emits the document data
+    return docData(userDocRef);
+    
+    // Alternatively, if you want a one-time fetch:
+    // return from(getDoc(userDocRef)).pipe(
+    //   map(docSnap => docSnap.data())
+    // );
+  }
   getCurrentUser() {
     throw new Error('Method not implemented.');
   }
