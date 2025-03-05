@@ -67,9 +67,8 @@
         }
         <div class="panel__inner--aside">
             <article class="panel__inner--left">
-                <figure class="panel__qr--wrapper">
-                    <!-- Integración QR con portal-profesional -->
-                     @if (qrCodeUrl) {
+                <!-- <figure class="panel__qr--wrapper">
+                    @if (qrCodeUrl) {
                          <img class="panel__qr--aside" [src]="qrCodeUrl" alt="QR Code" alt="">
                      }
                     <app-label
@@ -80,7 +79,7 @@
                         [icon]="isMobile ? '' : 'info-circle'"
                     >
                     </app-label>
-                </figure>
+                </figure> -->
                 <app-label
                     size="md"
                     [label]="empleado.fecha"
@@ -160,5 +159,12 @@
             }
     </section>
     } @else {
-        <p>Sin empleados!</p>
+        <app-label
+        [icon]="'notes-medical'"
+        [size]="isMobile ? 'sm' : 'md'"
+        [prefix]="'Bienvenido'"
+        [label]="'No hay empleados registrados'"
+        subtitle="Comienza registrando un empleado."
+        [direction]="'column'"
+    ></app-label>
     }

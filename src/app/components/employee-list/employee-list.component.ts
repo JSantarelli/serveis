@@ -148,7 +148,7 @@ export class EmployeeListComponent implements OnInit {
         this.empleados$ = this.authState$.pipe(
           switchMap((user) => {
             if (user) {
-              return this.attendanceService.getEmpleadosByUserId(user.uid).pipe(
+              return this.attendanceService.getEmpleados(user).pipe(
                 startWith([])
               );
             }

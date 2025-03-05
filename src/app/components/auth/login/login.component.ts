@@ -36,12 +36,13 @@ interface LoginForm {
   selector: 'app-login',
   templateUrl: './login.component.html',
 })
+
 export class LoginComponent {
   // rolMap: { [key: string]: { icon: string; color: string } } = {
   //   'Empleado': { icon: 'user-md', color: '#007bff' },
   //   'Administrador': { icon: 'user', color: '#28a745' }
   // }; 
-
+  
   hide = true;
   successMessage = '';
   errorMessage = '';
