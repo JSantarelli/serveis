@@ -34,7 +34,6 @@ export class EmployeeProfileComponent implements OnInit, AfterViewInit {
   id!: string;
   editableIcon!: string;
   editableColor!: string;
-  qrCodeUrl?: string;
   disabled = false;
   isMobile!: boolean;
   isModalOpen: boolean = false;
@@ -138,15 +137,6 @@ export class EmployeeProfileComponent implements OnInit, AfterViewInit {
     this.isMobile = width < 768; 
   }
 
-  generateQRCode(data: any) {
-    if (data) {
-      const formattedData = 
-      `Nombre: ${data.nombre}\nDescripción: ${data.rol}\nFecha: ${data.fecha}\nHora: ${data.hora}\nCategoria: ${data.estado}\nValidado: ${data.validado}\nEstado: ${data.estado}\nEmisor: ${data.cuil}\nAdjuntos: ${data.adjuntos}`;
-      const encodedData = encodeURIComponent(formattedData);
-      this.qrCodeUrl = `https://quickchart.io/qr?text=${encodedData}`;
-    }
-  }
-
   async fetchDetails(id: string) {
     this.initMap();
 
@@ -154,7 +144,6 @@ export class EmployeeProfileComponent implements OnInit, AfterViewInit {
       try {
         await this.loadEmpleado(id); 
         if (this.empleado) {
-          this.generateQRCode(this.empleado);
           
           // Only try to show location if map is initialized
           if (this.map) {
@@ -217,7 +206,6 @@ export class EmployeeProfileComponent implements OnInit, AfterViewInit {
     try {
       const empleado = await this.empleadoService.getEmpleado(id);
       this.empleado = empleado || null;
-      this.generateQRCode(empleado);
     } catch (error) {
       this.empleado = null;
       console.error('Error fetching empleado:', error);

@@ -34,9 +34,9 @@
       <app-label
           [size]="isMobile ? 'xs' : 'sm'"
           [icon]="'pen-to-square'"
-          [prefix]="'Tus empleados'"
-          [label]="'Comienza a escribir tu historia de salud'"
-          subtitle="Aquí se listarán los datos de salud que registres manualmente o a través del QR facilitado por quién haya gestionado tu empleado de salud."
+          [prefix]="'Administador'"
+          [label]="'Empleados'"
+          subtitle="Aquí se listarán los datos de tus empleados."
           [direction]="'column'"
       ></app-label>
   </ul>
@@ -46,9 +46,9 @@
           <app-card direction="row" [selectable]="true" [selected]="selectedItemId === data.id" [variant]="'fill'" severity="custom" [color]="getColorForServicio(data.servicio)" (cardSelected)="onCardSelected(data)">
                   <app-label
                   [size]="'xs'"
-                  [label]="data.nombre"
+                  label="{{ data.apellido }}, {{ data.nombre }}"
                   [prefix]="data.servicio"
-                  [subtitle]="isMobile ? '' : data.estado"
+                  subtitle="{{ data.fecha }} | {{ data.hora }}"
                   [icon]="getIconForServicio(data.servicio)"
                   [severity]="'custom'"
                   [color]="getColorForServicio(data.servicio)"

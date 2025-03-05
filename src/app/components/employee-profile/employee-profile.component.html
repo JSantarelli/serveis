@@ -1,15 +1,14 @@
+
 @if (empleado != null) {
     <section class="panel__main">
         <header class="panel__header--row">
             <app-label
-                [size]="isMobile ? 'md' : 'lg'"
-                [label]="empleado.nombre"
-                [prefix]="empleado.servicio"
-                [icon]="getIconForCategoria(empleado.servicio)"
-                [severity]="'custom'"
-                [color]="getColorForCategoria(empleado.servicio)"
-                direction="row">
-                <app-badge [severity]="empleado.estado ? 'success' : 'info'" label="{{ empleado.estado ? 'estado' : 'auto-empleado' }}" size="xs"></app-badge>
+            [size]="isMobile ? 'md' : 'lg'"
+            label="{{ empleado.apellido }}, {{ empleado.nombre }}"
+            prefix="{{ empleado.estado }}"
+            subtitle="{{ empleado.cuil }}"
+            direction="row">
+            <app-badge [severity]="empleado.estado ? 'success' : 'info'" label="{{ empleado.estado ? 'empleado' : 'supervisor' }}" size="xs"></app-badge>
                 <app-dropdown
                     [items]="getMenuItems(empleado)"
                     [position]="dropdownPosition"
@@ -17,19 +16,15 @@
                     buttonIcon="ellipsis-vertical"
                 ></app-dropdown>        
         </app-label>
+
         </header>
         <div class="panel__inner--main">
             <article class="panel__text--article">
                 {{ empleado.rol }}
-                {{ empleado.apellido }}
+                {{ empleado.nombre }}
             </article>
 
             <div #mapContainer style="width: 100%; height: 400px; min-height: 300px;"></div>
-            @if (empleado?.ubicacionActual) {
-                <!-- Resolver y mostrar timestamp -->
-            {{ empleado.ubicacionActual?.latitud }}
-            {{ empleado.ubicacionActual?.longitud }}
-        }
 
         @if (empleado.adjuntos.length > 0) {
                 <app-label
@@ -67,31 +62,27 @@
         }
         <div class="panel__inner--aside">
             <article class="panel__inner--left">
-                <!-- <figure class="panel__qr--wrapper">
-                    @if (qrCodeUrl) {
-                         <img class="panel__qr--aside" [src]="qrCodeUrl" alt="QR Code" alt="">
-                     }
-                    <app-label
-                        [size]="'sm'"
-                        [prefix]="'Para escanear el código, accede a tu cuenta experienciaPaciente.org.'"
-                        [direction]="'row'"
-                        [severity]="'neutral'"
-                        [icon]="isMobile ? '' : 'info-circle'"
-                    >
-                    </app-label>
-                </figure> -->
                 <app-label
                     size="md"
                     [label]="empleado.fecha"
-                    [prefix]="'Fecha del empleado'"
+                    [prefix]="'Fecha'"
                     [direction]="'row'"
                     >
                 </app-label>
+                @if (empleado.estado === 'Activo') {
+                    <app-label
+                        size="md"
+                        [label]="empleado.hora"
+                        [prefix]="'Hora de ingreso'"
+                        [direction]="'row'"
+                        >
+                    </app-label>
+                }
                 @if (empleado.rol) {
                     <app-label
                     size="md"
-                    [label]="empleado.rol"
-                    [prefix]="'Establecimiento de Salud'"
+                    [label]="empleado.servicio"
+                    [prefix]="'Lugar'"
                     [direction]="'row'"
                     >
                 </app-label>
@@ -106,15 +97,6 @@
                     labelPosition="right"
                     [disabled]="true"
                 ></app-switcher>
-                @if (empleado.estado === 'Activo') {
-                    <app-label
-                        size="md"
-                        [label]="empleado.estado"
-                        [prefix]="'Miembro equipo de Salud'"
-                        [direction]="'row'"
-                        >
-                    </app-label>
-                }
             </article>
         </div>
         <!-- Desacoplar footer en componente -->
