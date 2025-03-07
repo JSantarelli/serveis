@@ -2,15 +2,15 @@
   @if (loggedUser && rol === 'administrador') {
   <app-label
       size="md"
-      [label]="'Estos son tus empleados'"
-      prefix="Hola {{ rol }}"
+      [label]="'Listado de empleados'"
+      prefix="Hola {{ name }}"
       direction="row">
   </app-label>
   }
   <section class="input__group">
       <span class="input__wrapper">
         <label for="nombre">Buscador</label>
-        <input type="text" placeholder="Busca por título del empleado" class="input__size--sm"
+        <input type="text" placeholder="Ingrese nombre del empleado" class="input__size--sm"
         [formControl]="searchControl">
       </span>
       <app-button type="button" [direction]="'none'" [icon]="medCategories ? 'chevron-up' : 'chevron-down'" size="xs" [variant]="'outline'" severity="primary" direction="none" (clickEvent)="showMedCategories($event)"></app-button>
@@ -46,7 +46,7 @@
           <app-card direction="row" [selectable]="true" [selected]="selectedItemId === data.id" [variant]="'fill'" severity="custom" [color]="getColorForServicio(data.servicio)" (cardSelected)="onCardSelected(data)">
                   <app-label
                   [size]="'xs'"
-                  label="{{ data.apellido }}, {{ data.nombre }}"
+                  label="{{ data.apellido }} {{ data.nombre }}"
                   [prefix]="data.servicio"
                   subtitle="{{ data.fecha }} | {{ data.hora }}"
                   [icon]="getIconForServicio(data.servicio)"

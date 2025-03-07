@@ -2,8 +2,7 @@
   <span class="page__bg--overlay"></span>
   <form class="page__panel--float" [formGroup]="form" (ngSubmit)="signUp()">
     <section class="panel__inner--left">
-      <img *ngIf="!isMobile" src="./assets/img/serveis_logo-h.jpg" class="panel__img--center" width="240" src="" alt="logo serveis">
-      <!-- <img *ngIf="isMobile" class="panel__img--center" width="60" height="60" src="" alt="logo serveis"> -->
+      <span class="panel__img--center" width="84" height="160"></span>
     </section>
     <!-- form -->
     <section type="flex" class="panel__inner--right">
@@ -11,7 +10,7 @@
       size="md"
       [prefix]="'Ingreso'"
       [label]="'Bienvenido'"
-      subtitle="Aquí comienza tu historia de Salud"
+      subtitle="Registra tus datos laborales"
       [direction]="isMobile ? 'column' : 'row'"
     ></app-label>
     <hr>
@@ -38,7 +37,6 @@
           </small>
         </div>
       <section type="flex">
-        <span class="form__input-wrapper--row">
           <div class="form__input-wrapper--row">
             <div class="form__input-wrapper--col">
               <app-required [label]="'Contraseña'" [control]="'password'"></app-required>
@@ -64,7 +62,7 @@
           <div class="form__input-wrapper--row">
             <div class="form__input-wrapper--col">
               <app-required [label]="'Repetir contraseña'" [control]="'confirmPassword'"></app-required>
-              <input
+                <input
                 [type]="hide ? 'password' : 'text'"
                 formControlName="confirmPassword"
                 (input)="form.get('confirmPassword')?.updateValueAndValidity()"
@@ -73,23 +71,7 @@
                 Las contraseñas no coinciden
               </small>
             </div>
-
-            <div class="form__input-wrapper--col">
-              <app-required [label]="'Categoría'" [control]="'rol'"></app-required>
-                <select class="form__select--custom" id="rol" formControlName="rol" (change)="onCategoryChange()">
-                <option value="" disabled selected>Seleccionar categoría</option>
-                @for (rol of roles; track rol) {
-                  <option [value]="rol">
-                    {{ rol }}
-                  </option>
-                }
-              </select>
-              <small class="required" *ngIf="form.controls['rol']?.invalid && form.controls['rol']?.touched">
-                La categoría es obligatoria
-              </small>
-            </div>
-
-              <app-button
+            <app-button
               [type]="'button'"
               size="sm"
               [severity]="'primary'"
@@ -100,15 +82,29 @@
               >
             </app-button>
           </div>
-        </span>
+            <div class="form__input-wrapper--col">
+              <app-required [label]="'Categoría'" [control]="'rol'"></app-required>
+                <select class="form__select--custom" id="rol" formControlName="rol" (change)="onCategoryChange()">
+                <option value="" disabled selected>Seleccionar rol</option>
+                @for (rol of roles; track rol) {
+                  <option [value]="rol">
+                    {{ rol }}
+                  </option>
+                }
+              </select>
+              <small class="required" *ngIf="form.controls['rol']?.invalid && form.controls['rol']?.touched">
+                La categoría es obligatoria
+              </small>
+            </div>
       </section>
     </div>
     </section>
+    
     <!-- disclaimer -->
     <section class="panel__prefooter">
       <small class="footer__text--sm">
-        <b>Aviso Legal y Términos de Uso</b><br>
-        Al registrarte en experienciaPaciente, reconoces que la plataforma te brinda el poder de gestionar y controlar tus propios datos de salud, sin depender exclusivamente de sistemas tradicionales. experienciaPaciente no sustituye la atención médica, pero te posibilita acceder, registrar y compartir tu información de Salud.
+        <b>Disclaimer de Uso y Privacidad</b><br>
+        Serveis requiere acceso a la ubicación del dispositivo para registrar correctamente los fichajes de ingreso y egreso. Al utilizar esta aplicación, el usuario acepta que su ubicación y otros datos personales relacionados con su actividad laboral serán recolectados y tratados conforme a la normativa vigente y a la Política de Privacidad de la empresa.
       </small>
     </section>
     <footer class="panel__footer">

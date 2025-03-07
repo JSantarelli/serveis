@@ -69,6 +69,7 @@ export class AuthService {
         name: credential.name,
         lastName: credential.lastName,
         email: credential.email,
+        rol: credential.rol
       });
     } catch (error) {
       console.error('Error creating user:', error);

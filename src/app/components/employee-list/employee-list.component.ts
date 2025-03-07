@@ -57,10 +57,9 @@ export class EmployeeListComponent implements OnInit {
   filteredEmpleados$!: Observable<Empleado[]>;
   searchControl = new FormControl('');
   selectedCategory: string = '';
-  medCategories!: boolean;
+  medCategories = true;
   selectedItemId: string | null = null;
   isModalOpen: boolean = false;
-  afs: any;
 
   onCardSelected(data: { id: string }) {
     this.selectedItemId = data.id;
@@ -74,8 +73,8 @@ export class EmployeeListComponent implements OnInit {
   @Input() direction?: 'horizontal' | 'vertical' = 'horizontal';
 
   rolMap: { [key: string]: { icon: string; color: string } } = {
-    'Empleado': { icon: 'user-md', color: '#007bff' },
-    'Administrador': { icon: 'user', color: '#28a745' }
+    'Ingresos': { icon: 'right-to-bracket', color: '#007bff' },
+    'Egresos': { icon: 'right-from-bracket', color: '#28a745' }
   };  
 
   // Función que devuelve un array en lugar del array per-sé
@@ -93,7 +92,7 @@ export class EmployeeListComponent implements OnInit {
   getEmpleadoOptions(item: void): { label: string, icon?: string, subItems?: any[], path?: string, disabled: boolean, callback?: () => void } [] {
     return [
       { label: 'Empleado manual', icon: 'file-lines', path: '/check-attendance', disabled: false },
-      { label: 'Empleado QR', icon: 'qrcode', path: '/scan', disabled: false },
+      { label: 'Empleado QR', icon: 'qrcode', path: '/check-attendance', disabled: false },
     ]
   }
   
@@ -215,11 +214,11 @@ export class EmployeeListComponent implements OnInit {
   }
 
   getIconForServicio(servicio: string): string {
-    return this.rolMap[servicio]?.icon || 'question-circle';
+    return this.rolMap[servicio]?.icon || 'right-to-bracket';
   }
 
   getColorForServicio(servicio: string): string {
-    return this.rolMap[servicio]?.color || 'gray';
+    return this.rolMap[servicio]?.color || 'lightgray';
   }
 
   trackByFn(index: number, item: Empleado): string {

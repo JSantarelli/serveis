@@ -1,40 +1,40 @@
 <form [formGroup]="form" class="panel__main" (ngSubmit)="createRegistro()">
-  <header class="{{ isMobile ? 'panel__header--col' : 'panel__header--row' }}">
+  <header class="panel__header--col">
       <app-label
       [size]="isMobile ? 'md' : 'lg'"
-      [label]="'Nuevo registro'"
-      [prefix]="'Autoregistro'"
-      subtitle="Completa los campos requeridos (*)"
+      [label]="'Registrar ingreso'"
+      [prefix]="'Fichaje'"
+      [subtitle]="'El uso de la ubicación es puntual y solo al momento de fichar. La negativa a compartir esta información impedirá el uso de la función de fichaje.'"
       [severity]="'info'"
       direction="row"
     ></app-label>
-    <!-- Integrar con validators -->
-     @if (form.invalid) {
-       <app-badge severity="warning" label="Campos requeridos sin completar" size="md"></app-badge>
-     } @else if (!form.invalid) {
-       <app-badge severity="success" label="Campos requeridos completos" size="md"></app-badge>
-     }
-  </header>
-  <div id="map" style="width: 100%; height: 100%;"></div>
- <section class="panel__inner--main">
-    <section class="panel__inner--aside">
-       <div class="form__input-wrapper--col">
+      <!-- Integrar con validators -->
+      @if (form.invalid) {
+        <app-badge severity="danger" label="Campos requeridos sin completar" size="md"></app-badge>
+      } @else if (!form.invalid) {
+        <app-badge severity="warning" label="Recuerda activar la geolocalización" size="md"></app-badge>
+      }
+    </header>
+    <section class="panel__inner--main">
+    <div #mapContainer class="map" style="width: 100%; height: 280px; z-index: 1;"></div>
+    <span class="form__input-wrapper--row">
+      <div class="form__input-wrapper--col">
          <app-required [label]="'Fecha'" [control]="'fecha'"></app-required>
-         <input type="date" formControlName="fecha">
+         <input class="disabled" type="date" formControlName="fecha">
          <small class="required" *ngIf="form.controls['fecha']?.invalid && form.controls['fecha']?.touched">
            Debe seleccionar una fecha
          </small>
        </div>
        <div class="form__input-wrapper--col">
          <app-required [label]="'Hora'" [control]="'hora'"></app-required>
-         <input type="time" formControlName="hora">
+         <input class="disabled" type="time" formControlName="hora">
          <small class="required" *ngIf="form.controls['hora']?.invalid && form.controls['hora']?.touched">
            Debe seleccionar un horario
          </small>
        </div>
-
+    </span>
         @if (currentLocation) {
-          <div>
+          <div class="form__input-wrapper--col hidden">
             <label for="latitud">Latitud</label>
             <input
               id="latitud"
@@ -43,7 +43,7 @@
               (input)="updateLocation('latitud', $event)">
           </div>
           
-          <div>
+          <div class="form__input-wrapper--col hidden">
             <label for="longitud">Longitud</label>
             <input
               id="longitud"
@@ -51,21 +51,23 @@
               [value]="form.get('ubicacionActual')?.value?.longitud"
               (input)="updateLocation('longitud', $event)">
           </div>
-          
-          <!-- <div>
-            <label for="timestamp">Timestamp</label>
-            <input
-              id="timestamp"
-              type="datetime-local"
-              [value]="form.get('ubicacionActual')?.value?.timestamp"
-              (input)="updateLocation('timestamp', $event.target.value)">
-          </div> -->
           }
-          <div class="form__input-wrapper--col">
-            <app-required [label]="'Servicio'" [control]="'servicio'"></app-required>
-            <input type="text" formControlName="servicio">
-          </div>
-
+          @if (loggedUser && !isMobile) {
+            <div class="form__input-wrapper--col hidden">
+              <app-required [label]="'Nombre'" [control]="'nombre'"></app-required>
+              <input type="text" formControlName="nombre">
+            </div>
+          
+            <div class="form__input-wrapper--col hidden">
+              <app-required [label]="'Apellido'" [control]="'apellido'"></app-required>
+              <input type="text" formControlName="apellido">
+            </div>
+          
+            <div class="form__input-wrapper--col hidden">
+              <app-required [label]="'Servicio'" [control]="'servicio'"></app-required>
+              <input type="text" formControlName="servicio">
+            </div>
+          }
          <app-switcher
              [on]="validado"
              size="md"
@@ -73,22 +75,6 @@
              offLabel="Seleccionar ubicación manual"
              labelPosition="right"
          ></app-switcher>
-         <!-- @if (validado) {
-        <div class="input__group">
-            <label>City</label>
-            <select formControlName="ciudad" placeholder="city" [(ngModel)]="selectedCity">
-                <option value="0">--seleccione ciudad--</option>
-                <option *ngFor="let city of dropdownCity" [ngValue]="city">{{ city.name }}</option>
-            </select>
-        </div>
-        <ng-container *ngFor="let city of dropdownCity">
-            <ng-container *ngIf="selectedCity.name === city.name">
-                <input formControlName="lat" type="text" [(ngModel)]="selectedCity.lat" [value]="selectedCity.lat"/>
-                <input formControlName="lng" type="text" [(ngModel)]="selectedCity.lng" [value]="selectedCity.lng"/>
-            </ng-container>
-        </ng-container>
-         } -->
-    </section>
 </section>
       <!-- Desacoplar footer en componente -->
    <footer class="panel__footer">
@@ -103,17 +89,6 @@
          [type]="'button'"
          (clickEvent)="cancel()"
        ></app-button>
-       @if (!registroId) {
-       <app-button
-         size="xs"
-         [severity]="'warning'"
-         [variant]="'outline'"
-         [icon]="'arrows-rotate'"
-         [direction]="isMobile ? 'none' : 'row'"
-         [label]="isMobile ? '' : 'Reset'"
-         [type]="'reset'"
-       ></app-button>
-       }
      </div>
      <div class="panel__footer--right">
        @if (!registroId) {
@@ -122,18 +97,19 @@
          size="xs"
          [severity]="'primary'"
          [variant]="'link'"
-         [icon]="'mobile-screen-button'"
+         [icon]="'location-dot'"
          [direction]="isMobile ? 'none' : 'row'"
-         [label]="'Recargar ubicación'"
+         [label]="'Refrescar ubicación'"
+         (clickEvent)="refreshLocation()"
          ></app-button>
        }
        <app-button
        [severity]="'success'"
        type="submit"
        [variant]="'fill'"
-       [label]="isMobile ? '' : 'Guardar'"
+       [label]="isMobile ? '' : 'Registrar ingreso'"
        [direction]="isMobile ? 'none' : 'row'"
-       [icon]="registroId ? 'floppy-disk' : 'file-lines'"
+       [icon]="'right-to-bracket'"
        [disabled]="form.invalid"
        size="xs"
        [path]="'item/' + registroId"

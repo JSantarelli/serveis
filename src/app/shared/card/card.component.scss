@@ -121,9 +121,11 @@ app-card {
         }
       }
       
-    &--neutral {
+    &--custom {
     --card__border--color: var(--neutral);
-      &.card--selectable {
+    &.card--selectable {
+        box-shadow: var(--box-shadow);
+        padding: .5rem;
         &:hover {
           --card__bg--color: var(--neutral--light);
           background-color: var(--card__bg--color);
@@ -286,7 +288,7 @@ app-card {
 
     // Sizes
     &--xs {
-      --card__width: 90px;
+      --card__width: 100%;
       --card__padding: 12px;
       --card__height: 100%;
       background-color: #f1f4f5;

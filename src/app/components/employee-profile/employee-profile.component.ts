@@ -213,7 +213,7 @@ export class EmployeeProfileComponent implements OnInit, AfterViewInit {
   }
 
   getIconForCategoria(categoria: string): string {
-    return this.categoriaMap[categoria]?.icon || 'question-circle';
+    return this.categoriaMap[categoria]?.icon || 'calendar-check';
   }
 
   getColorForCategoria(categoria: string): string {

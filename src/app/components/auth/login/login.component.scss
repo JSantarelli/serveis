@@ -37,7 +37,7 @@
       // position: absolute;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: space-around;
       align-items: center;
       box-shadow: var(--box-shadow);
 
@@ -45,12 +45,8 @@
       height: 100%;
       z-index: 1;
       background-color: white;
-      row-gap: var(--wrapper__gap--row);
+    //   row-gap: var(--wrapper__gap--row);
       padding: 2rem;
-      
-      .panel__img--center {
-          align-self: center;
-      }
 
       .panel__footer {
           --panel__gap: auto;
@@ -63,6 +59,16 @@
       bottom: 2.5rem;
       width: calc(100vw - 2rem);
   }
+}
+      
+.panel__img--center {     
+    align-self: center;
+    background-image: url('./../../../assets/img/serveis_logo-h.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain; 
+    width: 200px;
+    height: 84px;
 }
 
 // Sign-up

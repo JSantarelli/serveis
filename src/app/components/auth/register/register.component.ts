@@ -42,14 +42,12 @@ interface SignUpForm {
   providers: [],
 })
 
-
-
 export class RegisterComponent {
 
   // considerar utilizar un enum o crear una colección para especialidades
   roles: string[] = [
-    'Administrador',
-    'Empleado'
+    'administrador',
+    'empleado'
   ];
 
   rolMap: { [key: string]: { icon: string; color: string } } = {
@@ -102,7 +100,7 @@ export class RegisterComponent {
      validators: [Validators.required,
       this.passwordFormatValidator()]
     }),
-    rol: this.formBuilder.control('')
+    rol: this.formBuilder.control('', Validators.required)
   });
 
   ngOnInit(): void {

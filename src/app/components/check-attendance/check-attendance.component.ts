@@ -1,5 +1,5 @@
 // check-attendance.component.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import L, { Map, tileLayer, marker, icon } from 'leaflet';
 import { Firestore, doc, updateDoc, collection, addDoc } from '@angular/fire/firestore';
@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { AttendanceService,  } from './../../services/attendance.service';
-import { Auth } from '@angular/fire/auth';
+import { Auth, authState, User } from '@angular/fire/auth';
 import { LabelComponent } from 'src/app/shared/label/label.component';
 import { BadgeComponent } from 'src/app/shared/badge/badge.component';
 import { ButtonComponent } from 'src/app/shared/button/button.component';
@@ -24,7 +24,15 @@ import { RequiredComponent } from 'src/app/shared/required/required.component';
 import { CardComponent } from 'src/app/shared/card/card.component';
 import { NotificationService } from './../../services/notificacion.service';
 import { EmployeeListComponent } from '../employee-list/employee-list.component';
+import { AuthService } from 'src/app/services/auth.service';
 
+export interface CustomUser extends User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  rol?: string | null;
+  }
+  
 export interface EmpleadoForm {
   nombre: FormControl<string>;
   apellido: FormControl<string>;
@@ -60,22 +68,33 @@ export interface EmpleadoForm {
     EmployeeListComponent
   ],
 })
-export class CheckAttendanceComponent implements OnInit {
-  map!: Map;
+export class CheckAttendanceComponent implements OnInit, AfterViewInit {
+  id!: string;
   currentLocation = true;
+  loggedUser = true;
   isMobile = false;
   private subscription: Subscription = new Subscription();
   validado = true;
   registroId: string | null = null;
-  empleado?: Empleado;
+  empleado!: Empleado | null;
   hasChange: boolean = false;
   uploadedImages: string[] = [];
   uploadedFileNames: string[] = [];
-
   showConfirmMsg = false;
   showErrorMsg = false;
   hide = true;
+  map!: L.Map;
+  email: string | null = null;
+  name: string | null = null;
+  rol: string | null = null;
+  checkInMarker: any;
+  private auth: Auth = inject(Auth);
+  private authservice = inject(AuthService);
+  readonly authState$ = authState(this.auth);
 
+  
+  @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
+  
   checkIfMobile(width: number): void {
     this.isMobile = width < 768; 
   }
@@ -86,9 +105,15 @@ export class CheckAttendanceComponent implements OnInit {
     private _activatedRoute: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private empleadoService: AttendanceService,
   ) {}
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.initMap();
+    }, 1000);
+  }
   // Notificaciones
   triggerSuccess() {
     this.notificationService.addNotification('Registro creado con éxito!', 'success');
@@ -99,6 +124,50 @@ export class CheckAttendanceComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.authState$.subscribe((user: CustomUser | null) => {
+      if (user) {
+        this.email = user.email;
+        this.name = user.displayName;
+        
+        // Patch basic user info to form immediately
+        this.form.patchValue({
+          nombre: user.displayName || '',
+          email: user.email || ''
+        });
+        
+        // Fetch additional role from Firestore
+        this.authservice.getUserData(user.uid).subscribe(userData => {
+          if (userData) {
+            this.rol = userData['rol'] || null;
+            
+            // Update form with additional user data
+            this.form.patchValue({
+              rol: userData['rol'] || 'Empleado',
+              // You can add other fields from userData here
+              servicio: userData['servicio'] || 'BPN - Casa Central',
+              apellido: userData['apellido'] || ''
+            });
+          }
+        });
+      } else {
+        this.email = null;
+        this.name = 'Usuario';
+        this.rol = null;
+        
+        // Reset form when user logs out
+        this.form.reset({
+          rol: 'Empleado',
+          estado: 'Activo',
+          ubicacionActual: {
+            latitud: null,
+            longitud: null,
+            timestamp: new Date()
+          },
+          adjuntos: []
+        });
+      }
+    });
+
     this.checkIfMobile(window.innerWidth);
     this.registroId = this._activatedRoute.snapshot.paramMap.get('id');
   
@@ -130,19 +199,37 @@ export class CheckAttendanceComponent implements OnInit {
     this.form.get('adjuntos')?.value.forEach((url: string) => URL.revokeObjectURL(url));
   }
 
-  onTitleChange() {
-    // this.editableTitle = this.form.controls['titulo'].value;
-    return this.hasChange = true;
+  async loadEmpleado(id: string): Promise<void> {
+    try {
+      const empleado = await this.empleadoService.getEmpleado(id);
+      this.empleado = empleado || null;
+      
+      if (this.empleado) {
+        // Patch form values after loading employee
+        this.form.patchValue({
+          nombre: this.empleado.nombre,
+          apellido: this.empleado.apellido,
+          servicio: this.empleado.servicio
+        });
+      }
+    } catch (error) {
+      this.empleado = null;
+      console.error('Error fetching empleado:', error);
+    }
   }
 
-  // setTitle() {
-  //   return this.form.controls['titulo'].value;
-  // }
-
-  // validateRecord() {
-  //   this.validado = !this.validado;
-  //   this.form.controls['validado'].setValue(this.validado);
-  // }
+  async fetchDetails(id: string) {
+    if (id) {
+      try {
+        await this.loadEmpleado(id); 
+      } catch (error) {
+        console.error('Error loading empleado:', error);
+        this.empleado = null; 
+      }
+    } else {
+      this.empleado = null;
+    }
+  }
 
   onCategoryChange() {
     const servicio = this.form.controls['servicio'].value;
@@ -157,45 +244,13 @@ export class CheckAttendanceComponent implements OnInit {
 
   // considerar utilizar un enum o crear una colección para especialidades
   categorias: string[] = [
-    'Medicina General',
-    'Pediatría',
-    'Ginecología y Obstetricia',
-    'Cardiología',
-    'Dermatología',
-    'Neurología',
-    'Psiquiatría',
-    'Endocrinología',
-    'Gastroenterología',
-    'Traumatología y Ortopedia',
-    'Oftalmología',
-    'Otorrinolaringología',
-    'Urología',
-    'Neumología',
-    'Oncología',
-    'Nutrición y Dietética',
-    'Fisiatría y Rehabilitación',
-    'Odontología'
+    'Ingresos',
+    'Egresos',
   ];
   
   categoriaMap: { [key: string]: { icon: string; color: string } } = {
-    'Medicina General': { icon: 'user-md', color: '#007bff' }, // Blue
-    'Pediatría': { icon: 'baby', color: '#28a745' }, // Green
-    'Ginecología y Obstetricia': { icon: 'venus', color: '#e83e8c' }, // Pink
-    'Cardiología': { icon: 'heart', color: '#dc3545' }, // Red
-    'Dermatología': { icon: 'spa', color: '#fd7e14' }, // Orange
-    'Neurología': { icon: 'brain', color: '#6f42c1' }, // Purple
-    'Psiquiatría': { icon: 'comments', color: '#20c997' }, // Teal
-    'Endocrinología': { icon: 'balance-scale', color: '#ffc107' }, // Yellow
-    'Gastroenterología': { icon: 'stethoscope', color: '#795548' }, // Brown
-    'Traumatología y Ortopedia': { icon: 'crutch', color: '#6c757d' }, // Gray
-    'Oftalmología': { icon: 'eye', color: '#17a2b8' }, // Cyan
-    'Otorrinolaringología': { icon: 'head-side-cough', color: '#6610f2' }, // Indigo
-    'Urología': { icon: 'x-ray', color: '#007bff' }, // Blue
-    'Neumología': { icon: 'lungs', color: '#87ceeb' }, // Light Blue
-    'Oncología': { icon: 'ribbon', color: '#6f42c1' }, // Purple
-    'Nutrición y Dietética': { icon: 'utensils', color: '#a2d729' }, // Lime
-    'Fisiatría y Rehabilitación': { icon: 'dumbbell', color: '#fd7e14' }, // Orange
-    'Odontología': { icon: 'tooth', color: '#ffffff' } // White
+    'Ingresos': { icon: 'right-to-bracket', color: '#007bff' },
+    'Egresos': { icon: 'right-from-bracket', color: '#28a745' }
   };  
 
   // Properties for the Label component
@@ -212,7 +267,6 @@ export class CheckAttendanceComponent implements OnInit {
   private _formBuilder = inject(FormBuilder).nonNullable;
   private _router = inject(Router);
   private _attendanceService = inject(AttendanceService);
-  private auth: Auth = inject(Auth);
 
   form = this._formBuilder.group<EmpleadoForm>({
     nombre: this._formBuilder.control(''),
@@ -289,7 +343,7 @@ export class CheckAttendanceComponent implements OnInit {
       } else {
         await this._attendanceService.updateEmpleado(this.registroId, registro);
       }
-      this._router.navigate(['/']);
+      this._router.navigate(['/employees/']);
       this.triggerSuccess();
     } catch (error) {
       this.triggerError();
@@ -406,61 +460,127 @@ export class CheckAttendanceComponent implements OnInit {
 
 
   initMap(): void {
-    const mapContainer = document.getElementById('map')!; // use ViewChild input
-    this.map = new Map(mapContainer).setView([0, 0], 2);
-
-    // Map style   
-    var Stadia_AlidadeSmooth = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-	  maxZoom: 20,
-	  attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-    });
-
-    //titulo
-    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 4,
-      attribution: '© OpenStreetMap contributors'
-    });
-
-    tiles.addTo(this.map);
-    Stadia_AlidadeSmooth.addTo(this.map)
+    if (!this.mapContainer || !this.mapContainer.nativeElement) {
+      console.error('Map container element not available');
+      return;
+    }
+    
+    try {
+      console.log('Initializing map with container:', this.mapContainer.nativeElement);
+      
+      // Check if map is already initialized
+      if (this.map) {
+        console.log('Map already initialized, skipping');
+        return;
+      }
+      
+      this.map = new L.Map(this.mapContainer.nativeElement).setView([0, 0], 2);
+      
+      // Map style   
+      var Stadia_AlidadeSmooth = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+      });
+      
+      //titulo
+      const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 4,
+        attribution: '© OpenStreetMap contributors'
+      });
+      
+      tiles.addTo(this.map);
+      Stadia_AlidadeSmooth.addTo(this.map);
+      
+      // Invalidate size to handle any sizing issues
+      setTimeout(() => {
+        this.map.invalidateSize();
+      }, 100);
+      
+      console.log('Map initialized successfully');
+      
+      // Call getCurrentLocation after map is initialized
+      this.getCurrentLocation();
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
   }
 
   getCurrentLocation(): void {
+    if (!this.map) {
+      console.error('Map not initialized');
+      return;
+    }
+    
     if (navigator.geolocation) {
+      // Show loading indicator
+      const loadingMessage = L.popup()
+        .setLatLng(this.map.getCenter())
+        .setContent('Locating you...')
+        .openOn(this.map);
+        
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          // Close loading message
+          this.map?.closePopup();
+          
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
   
-          this.map.setView([lat, lng], 15);
+          this.map?.setView([lat, lng], 15);
   
-          const marker = L.marker([lat, lng]).addTo(this.map)
-            .bindPopup('You are here')
+          const marker = L.marker([lat, lng]).addTo(this.map as L.Map)
+            .bindPopup('Usted está aquí')
             .openPopup();
-            const ubicacion: Ubicacion = {
+            
+          const ubicacion: Ubicacion = {
             latitud: lat,
             longitud: lng,
             timestamp: new Date()
           };
   
           this.form.get('ubicacionActual')?.setValue(ubicacion);
+          console.log('Location updated:', ubicacion);
         },
         (error) => {
+          // Update loading message with error
+          if (this.map) {
+            L.popup()
+              .setLatLng(this.map.getCenter())
+              .setContent('Could not get your location: ' + error.message)
+              .openOn(this.map);
+          }
           console.error('Error getting location', error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
         }
       );
     } else {
       console.error('Geolocation is not supported by this browser.');
+      if (this.map) {
+        L.popup()
+          .setLatLng(this.map.getCenter())
+          .setContent('Geolocation is not supported by this browser')
+          .openOn(this.map);
+      }
     }
   }
-
-  onSubmit() {
-    const ubicacion = this.form.value.ubicacionActual;
+    
+  // Add this method to manually trigger location update
+  refreshLocation(): void {
+    this.getCurrentLocation();
   }
+
 
   updateLocation(key: 'latitud' | 'longitud', event: Event) {
     const value = (event.target as HTMLInputElement).value;
     console.log(`${key} updated to`, value);
   }
 
+  
+  onSubmit() {
+    const ubicacion = this.form.value.ubicacionActual;
+  }
 }

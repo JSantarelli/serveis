@@ -4,11 +4,11 @@
         <header class="panel__header--row">
             <app-label
             [size]="isMobile ? 'md' : 'lg'"
-            label="{{ empleado.apellido }}, {{ empleado.nombre }}"
+            label="{{ empleado.apellido }} {{ empleado.nombre }}"
             prefix="{{ empleado.estado }}"
             subtitle="{{ empleado.cuil }}"
             direction="row">
-            <app-badge [severity]="empleado.estado ? 'success' : 'info'" label="{{ empleado.estado ? 'empleado' : 'supervisor' }}" size="xs"></app-badge>
+            <app-badge [severity]="empleado.estado ? 'success' : 'info'" label="{{ empleado.estado ? 'activo' : 'inactivo' }}" size="xs"></app-badge>
                 <app-dropdown
                     [items]="getMenuItems(empleado)"
                     [position]="dropdownPosition"

@@ -44,6 +44,11 @@ section,aside, div, header {
     display: flex;
     flex-direction: column;
     row-gap: var(--wrapper__gap--col);
+
+    &.hidden {
+      display: none;
+      // visibility: hidden;
+    }
   }
 
   .form__input-wrapper--row {

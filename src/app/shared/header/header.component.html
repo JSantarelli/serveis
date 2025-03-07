@@ -1,7 +1,6 @@
 <header id="main">
     <section class="flex--row">
-      <img *ngIf="!isMobile" src="{{ brandDesktop }}" alt="" width="234" height="37" />
-      <img *ngIf="isMobile" src="{{ brandMobile }}" alt="" width="45" height="45" />
+    <span class="header__logo"></span>
     </section>
     <!-- Badges -->
     <section class="header__wrapper--right">
@@ -26,7 +25,7 @@
 </header>
 @if (isModalOpen) {
   <app-modal
-    [prefix]="'Salir de experienciaPaciente'"
+    [prefix]="'Salir del sistema'"
     [title]="'¿Desea cerrar su sesión?'"
     [subtitle]="'Presione \'Cerrar sesión\' para salir o \'Cancelar\' para continuar en experienciaPaciente.'"
     icon="right-from-bracket"
