@@ -23,7 +23,7 @@ export class HomeComponent {
   title = 'gestor de empleados';
   imgSrc = './assets/img/serveis_logo-h.jpg';
   isMobile: boolean = false;
-  currentView: 'list' | 'detail' | 'check-attendance' | 'update' = 'list';
+  currentView: 'list' | 'profile' | 'check-attendance' | 'update' = 'list';
 
   constructor(private router: Router) {}
   @HostListener('window:resize', ['$event'])
@@ -45,8 +45,8 @@ export class HomeComponent {
   }
 
   determineCurrentView(url: string): void {
-    if (url.includes('/item/')) {
-      this.currentView = 'detail';
+    if (url.includes('/profile/')) {
+      this.currentView = 'profile';
     } else if (url.includes('/check-attendance')) {
       this.currentView = 'check-attendance';
     } else if (url.includes('/actualizar/')) {
